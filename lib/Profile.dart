@@ -20,6 +20,7 @@ class _ProfileState extends State<Profile> {
   String status = '';
   String base64Image;
   File tmpFile;
+  String fileName;
   String errMessage = 'Error Uploading Image';
   File _fimage;
   final _pick = ImagePicker();
@@ -37,6 +38,7 @@ class _ProfileState extends State<Profile> {
     setState(() {
       if (pickedfile != null) {
         _fimage = File(pickedfile.path);
+        fileName = pickedfile.path.split('/').last;
       } else {
         print('No image selected.');
       }
@@ -50,25 +52,26 @@ class _ProfileState extends State<Profile> {
     });
   }
 
-  startUpload() {
-  tmpFile = _fimage;
-  base64Image = base64Encode(_fimage.readAsBytesSync());
-  print(_fimage);
-  setStatus('Uploading Image...');
-  if (null == tmpFile) {
-    setStatus(errMessage);
-    return;
-  }
-  String fileName = tmpFile.path.split('/').last;
-  upload(fileName);
+  startUpload() async{
+    final uri = Uri.parse("http://starxdev.com/stiw2044/uploadimage.php");
+    var request = http.MultipartRequest('POST',uri);
+    var pic = await http.MultipartFile.fromPath("image", _fimage.path);
+    request.files.add(pic);
+    var response = await request.send();
+
+    if(response.statusCode == 200) {
+      print('image uploaded');
+    } else {
+      print('image not uploaded');
+    }
 }
  
 upload(String fileName) {
-  print("test "+base64Image);
-  http.post('http://stiw2044.atwebpages.com/ProfileImage/uploadimage.php', body: {
+  http.post('http://starxdev.com/stiw2044/profileImage/uploadimage.php', body: {
     "image": base64Image,
     "name": fileName,
-    "phone": LoginScreen.email,
+    "email": LoginScreen.email,
+    "address": LoginScreen.address,
   }).then((result) {
     print(result);
     setStatus(result.statusCode == 200 ? result.body : errMessage);

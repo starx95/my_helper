@@ -9,14 +9,19 @@ import 'Register.dart';
 import 'package:http/http.dart' as http;
 import 'package:toast/toast.dart';
 import 'package:flutter_session/flutter_session.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:firebase_core/firebase_core.dart';
 
 Future<void> main() async {
+   WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp();
   runApp(MyApp());
   WidgetsFlutterBinding.ensureInitialized();
-  if (await LoginScreen.session.get('name') == '') {
-    LoginScreen.name = await LoginScreen.session.get('name');
-    LoginScreen.email = await LoginScreen.session.get('phone');
-    LoginScreen.address = await LoginScreen.session.get('address');
+  SharedPreferences prefs = await SharedPreferences.getInstance();
+  if (prefs.getString('name') != null) {
+    LoginScreen.name = prefs.getString('name');
+    LoginScreen.email = prefs.getString('email');
+    LoginScreen.address = prefs.getString('address');
   }
   
 }
@@ -50,7 +55,8 @@ class SplashScreenPage extends StatelessWidget {
   }
 
   check() {
-    runApp(MaterialApp(home: LoginScreen.name != null ? Home() : LoginScreen()));
+    print("Test");
+    runApp(MaterialApp(home: LoginScreen.name != '' ? Home() : LoginScreen()));
   }  
 }  
 
@@ -77,7 +83,6 @@ class _LoginScreenState extends State<LoginScreen> {
   bool _enabled = false;
   bool emailValid;
   void showToast() {}
-
   void onPressVisibility(int no) {
     setState(() {
       if(no == 1){_showPassword = !_showPassword;}
@@ -221,12 +226,18 @@ class _LoginScreenState extends State<LoginScreen> {
         LoginScreen.token = await LoginScreen.session.get('user');
         print(json.decode(res.body));
         LoginScreen.body = json.decode(res.body);
-        await LoginScreen.session.set('name', LoginScreen.body[0]['name']);
-        await LoginScreen.session.set('email', LoginScreen.body[0]['email']);
-        await LoginScreen.session.set('address', LoginScreen.body[0]['address']);
-        LoginScreen.name = await LoginScreen.session.get('name');
-        LoginScreen.email = await LoginScreen.session.get('email');
-        LoginScreen.address = await LoginScreen.session.get('address');
+        //await LoginScreen.session.set('name', LoginScreen.body[0]['name']);
+        //await LoginScreen.session.set('email', LoginScreen.body[0]['email']);
+        //await LoginScreen.session.set('address', LoginScreen.body[0]['address']);
+        
+        SharedPreferences prefs = await SharedPreferences.getInstance();
+        prefs.setString('name', LoginScreen.body[0]['name']);
+        prefs.setString('email', LoginScreen.body[0]['email']);
+        prefs.setString('address', LoginScreen.body[0]['address']);
+
+        LoginScreen.name = prefs.getString('name');
+        LoginScreen.email = prefs.getString('email');
+        LoginScreen.address = prefs.getString('address');
         Toast.show(
           "Login Success",
           context,
