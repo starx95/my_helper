@@ -1,6 +1,7 @@
 import 'package:email_validator/email_validator.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:geocoder/geocoder.dart';
 import 'package:my_helper/main.dart';
 import 'package:maps_launcher/maps_launcher.dart';
 import 'package:geolocator/geolocator.dart';
@@ -8,6 +9,9 @@ import 'package:http/http.dart' as http;
 import 'package:progress_dialog/progress_dialog.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:toast/toast.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 class Register extends StatefulWidget {
   @override
@@ -24,70 +28,173 @@ class _Register extends State<Register> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   final GlobalKey<FormState> _formKeys = GlobalKey<FormState>();
   bool _isDeactivated = true;
-
+  Position _currentPosition;
+  LatLng _center = const LatLng(45.521563, -122.677433);
+  double latitude, longitude;
+  String _currentAddress;
   String _password = "";
   String _rpassword = "";
   String _name = "";
   String _phone = "";
   String _address = "";
   String _email = "";
+  List<Marker> myMarker = [];
+  GoogleMapController myController;
   bool _passwordVisible = false;
   bool _rememberMe = false;
   bool _isnotVisible = true;
   bool monVal = false;
+  String title = "";
+  bool _isButtonDisabled = true;
+  final db = FirebaseFirestore.instance;
   final Geolocator geolocator = Geolocator()..forceAndroidLocationManager;
-  Position _currentPosition;
-  String _currentAddress;
 
   @override
   void initState() {
     super.initState();
+    myMarker = [];
+    myMarker.add(Marker(
+      markerId: MarkerId(_center.toString()),
+      position: _center,
+    ));
     _getCurrentLocation();
   }
 
-  _getCurrentLocation() {
-    if (!_currentPosition.toString().contains('Lat:')) {
-      geolocator
-          .getCurrentPosition(desiredAccuracy: LocationAccuracy.best)
-          .then((Position position) {
-        setState(() {
-          if (_currentPosition != position) {
-            _currentPosition = position;
-          }
+  Future<void> showMapDialog(BuildContext context) async {
+    double width = MediaQuery.of(context).size.width;
+    return await showDialog(
+        context: context,
+        builder: (context) {
+          return StatefulBuilder(builder: (context, newSetState) {
+            return AlertDialog(
+                title: Center(
+                  child: Text("Please mark your location"),
+                ),
+                content: Container(
+                  width: width,
+                  child: GoogleMap(
+                    markers: myMarker.toSet(),
+                    onTap: (newLatLng) async {
+                      _handleTap(newLatLng, newSetState);
+                      Coordinates coordinates = new Coordinates(
+                          newLatLng.latitude, newLatLng.longitude);
+                      var addresses = await Geocoder.local
+                          .findAddressesFromCoordinates(coordinates);
+                      print(addresses.first.addressLine);
+                      _currentAddress = "${addresses.first.addressLine}";
+                      newLatLng.toString();
+                      _addcontroller.text = _currentAddress;
+                    },
+                    onMapCreated: _onMapCreated,
+                    initialCameraPosition: CameraPosition(
+                      target: _center,
+                      zoom: 17.0,
+                    ),
+                  ),
+                ),
+                actions: <Widget>[
+                  Column(children: <Widget>[
+                    Center(
+                      child: Column(
+                        children: <Widget>[
+                          Padding(
+                            padding: EdgeInsets.fromLTRB(20, 0, 20, 0),
+                            child: Text(
+                              'Address: ' + _currentAddress.toString(),
+                              textAlign: TextAlign.left,
+                            ),
+                          )
+                        ],
+                      ),
+                    )
+                  ]),
+                  new Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: <Widget>[
+                        Align(
+                          alignment: Alignment.centerLeft,
+                          child: Container(
+                              width: 300,
+                              child: Row(
+                                children: [
+                                  FlatButton(
+                                    child: Text("OK", textAlign: TextAlign.end),
+                                    onPressed: () {
+                                      Navigator.of(context).pop();
+                                    },
+                                  ),
+                                  FlatButton(
+                                      child: Text(
+                                        "Close",
+                                        textAlign: TextAlign.end,
+                                      ),
+                                      onPressed: () {
+                                        Navigator.of(context).pop();
+                                      }),
+                                ],
+                              )),
+                        )
+                      ]),
+                ]);
+          });
         });
+  }
 
-        _getAddressFromLatLng();
-        print(_currentPosition);
-      }).catchError((e) {
-        print(e);
+  _handleTap(tappedPoint, newSetState) async {
+    latitude = tappedPoint.latitude;
+    longitude = tappedPoint.longitude;
+    final coordinates = new Coordinates(latitude, longitude);
+
+    try {
+      var addresses =
+          await Geocoder.local.findAddressesFromCoordinates(coordinates);
+      print(addresses.first.addressLine);
+      _currentAddress = "${addresses.first.addressLine}";
+      setState(() {});
+    } catch (e) {
+      print(e);
+    }
+    newSetState(() {
+      myMarker.clear();
+      if (_currentAddress != "" && title != "") {
+        _isButtonDisabled = false;
+      }
+      myMarker.add(Marker(markerId: MarkerId('New'), position: tappedPoint));
+    });
+  }
+
+  _getCurrentLocation() {
+    geolocator
+        .getCurrentPosition(desiredAccuracy: LocationAccuracy.best)
+        .then((Position position) {
+      setState(() {
+        if (_currentPosition != position) {
+          _currentPosition = position;
+          _center = LatLng(position.latitude, position.longitude);
+        }
       });
 
-      if (_currentPosition != null) {
-        /*Toast.show(_currentPosition.toString(), context,
-          duration: Toast.LENGTH_SHORT,
-          gravity: Toast.BOTTOM,
-          backgroundColor: Colors.red[300],
-          textColor: Colors.black);*/
-      }
-    } else {
-
-    }
+      _getAddressFromLatLng();
+      print(_currentPosition);
+    }).catchError((e) {
+      print(e);
+    });
   }
 
   _getAddressFromLatLng() async {
     try {
-      List<Placemark> p = await geolocator.placemarkFromCoordinates(
+      final coordinates = new Coordinates(
           _currentPosition.latitude, _currentPosition.longitude);
 
-      Placemark place = p[0];
-
+      var addresses =
+          await Geocoder.local.findAddressesFromCoordinates(coordinates);
       setState(() {
-        _currentAddress =
-            "${place.locality}, ${place.postalCode}, ${place.country}";
+        print(addresses.first.addressLine);
+        _currentAddress = "${addresses.first.addressLine}";
+        setState(() {});
         _address = _currentAddress;
       });
       _addcontroller.text = _currentAddress;
-      ;
     } catch (e) {
       print(e);
     }
@@ -142,10 +249,7 @@ class _Register extends State<Register> {
                         icon: const Icon(Icons.location_city),
                         suffixIcon: IconButton(
                           icon: Icon(Icons.pin_drop_rounded),
-                          onPressed: () => MapsLauncher.launchCoordinates(
-                              _currentPosition.latitude,
-                              _currentPosition.longitude,
-                              'You are here'),
+                          onPressed: () async => showMapDialog(context),
                         )),
                   ),
                   Form(
@@ -161,7 +265,8 @@ class _Register extends State<Register> {
                           validator: (_emcontroller) {
                             if (_emcontroller == '') {
                               return 'Please Enter your email address';
-                            } else if (EmailValidator.validate(_emcontroller) == false) {
+                            } else if (EmailValidator.validate(_emcontroller) ==
+                                false) {
                               //_email = '';
                               return 'Please enter a valid email';
                             } else {
@@ -292,6 +397,10 @@ class _Register extends State<Register> {
 
   int dah = 0;
 
+  void _onMapCreated(GoogleMapController controller) {
+    myController = controller;
+  }
+
   bool _validateAll() {
     if (_name != '' &&
         _password != '' &&
@@ -303,10 +412,8 @@ class _Register extends State<Register> {
         _email != '' &&
         monVal == true) {
       _isDeactivated = false;
-      _getCurrentLocation();
     } else {
       _isDeactivated = true;
-      _getCurrentLocation();
     }
   }
 
@@ -319,7 +426,8 @@ class _Register extends State<Register> {
         // return object of type Dialog
         return AlertDialog(
           title: new Text("Confirm Registration"),
-          content: new Text("Are you sure to register with the following details?"),
+          content:
+              new Text("Are you sure to register with the following details?"),
           actions: <Widget>[
             // usually buttons at the bottom of the dialog
             new FlatButton(
@@ -341,7 +449,6 @@ class _Register extends State<Register> {
     );
   }
 
-
   void _onRegister() async {
     _name = _namecontroller.text;
     _password = _pscontroller.text;
@@ -349,9 +456,6 @@ class _Register extends State<Register> {
     _phone = _phcontroller.text;
     _address = _addcontroller.text;
     _email = _emcontroller.text;
-
-
-
 
     if (_password != _rpassword) {
       if (!validatePhone(_phone)) {
@@ -366,44 +470,86 @@ class _Register extends State<Register> {
     }
     ProgressDialog pr = new ProgressDialog(context,
         type: ProgressDialogType.Normal, isDismissible: false);
-    pr.style(message: "Registration...");
+    pr.style(message: "Registering...");
     await pr.show();
-    http.post("https://starxdev.com/stiw2044/register_user.php", body: {
-      "name": _name,
-      "address": _address,
-      "password": _password,
-      "email": _email,
-    }).then((res) {
-      if (res.body.contains('Duplicate')) {
+
+    try {
+      UserCredential userCredential = await FirebaseAuth.instance
+          .createUserWithEmailAndPassword(email: _email, password: _password);
+      var user = await FirebaseAuth.instance.currentUser;
+      print("test :" + userCredential.toString() + " test ");
+
+      await FirebaseAuth.instance.currentUser.updateProfile(
+        displayName: _name,
+        photoURL: 'define an url',
+      );
+      await db.collection("Users").doc(_email).set({
+        'name': _name,
+        'address': _address,
+        'email': _email,
+        'phone': _phone
+      });
+
+      user.sendEmailVerification();
+      Toast.show(
+        "Registration success. Please check your email for OTP verification.",
+        context,
+        duration: Toast.LENGTH_LONG,
+        gravity: Toast.TOP,
+      );
+      Navigator.pop(context);
+    } on FirebaseAuthException catch (e) {
+      if (e.code == 'weak-password') {
+        print('The password provided is too weak.');
+      } else if (e.code == 'email-already-in-use') {
         Toast.show(
           "Registration failed Email address already exist",
           context,
           duration: Toast.LENGTH_LONG,
           gravity: Toast.TOP,
         );
+        print('An account already exists for that email.');
       }
-      if (res.body == "succes") {
-        Toast.show(
-          "Registration success. An email has been sent to the registered email. Please check your email for OTP verification.",
-          context,
-          duration: Toast.LENGTH_LONG,
-          gravity: Toast.TOP,
-        );
-        if (_rememberMe) {
-          savepref();
-        }
-        _onLogin();
-      } else {
-        Toast.show(
-          "Registration failed",
-          context,
-          duration: Toast.LENGTH_LONG,
-          gravity: Toast.TOP,
-        );
-      }
-    }).catchError((err) {
-      print(err);
-    });
+    } catch (e) {
+      print(e);
+    }
+
+    // http.post("https://starxdev.com/stiw2044/register_user.php", body: {
+    //   "name": _name,
+    //   "address": _address,
+    //   "password": _password,
+    //   "email": _email,
+    // }).then((res) {
+    //   if (res.body.contains('Duplicate')) {
+    //     Toast.show(
+    //       "Registration failed Email address already exist",
+    //       context,
+    //       duration: Toast.LENGTH_LONG,
+    //       gravity: Toast.TOP,
+    //     );
+    //   }
+    //   if (res.body == "succes") {
+    //     Toast.show(
+    //       "Registration success. An email has been sent to the registered email. Please check your email for OTP verification.",
+    //       context,
+    //       duration: Toast.LENGTH_LONG,
+    //       gravity: Toast.TOP,
+    //     );
+    //     if (_rememberMe) {
+    //       savepref();
+    //     }
+    //     _onLogin();
+    //   } else {
+    //     Toast.show(
+    //       "Registration failed",
+    //       context,
+    //       duration: Toast.LENGTH_LONG,
+    //       gravity: Toast.TOP,
+    //     );
+    //   }
+    // }).catchError((err) {
+    //   print(err);
+    // });
     await pr.hide();
   }
 
@@ -439,13 +585,11 @@ class _Register extends State<Register> {
     RegExp regExp = new RegExp(pattern);
     if (!regExp.hasMatch(value1)) {
       _isDeactivated = true;
-      _getCurrentLocation();
       _validateAll();
       return "Your password must have at least 8 characters included\n with a number, one uppercase letter and one \nlowercase letter";
     } else {
       _isDeactivated = false;
       _password = value1;
-      _getCurrentLocation();
       _validateAll();
     }
   }

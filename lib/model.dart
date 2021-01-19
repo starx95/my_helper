@@ -21,7 +21,7 @@ class Data {
       );
 
   void save() {
-    reference.setData(toMap());
+    reference.set(toMap());
   }
 
   Map<String, dynamic> toMap() {

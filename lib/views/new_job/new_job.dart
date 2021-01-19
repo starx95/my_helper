@@ -2,43 +2,28 @@ import 'dart:async';
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:my_helper/views/new_job/new_job.dart';
 import 'package:progress_dialog/progress_dialog.dart';
 import 'package:splashscreen/splashscreen.dart';
-import 'Home.dart';
-import 'Profile.dart';
-import 'Register.dart';
+import '../../Home.dart';
+import '../../Register.dart';
 import 'package:http/http.dart' as http;
 import 'package:toast/toast.dart';
 import 'package:flutter_session/flutter_session.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:firebase_core/firebase_core.dart';
-import 'gpsLocation.dart';
-import 'package:location_permissions/location_permissions.dart';
-import 'package:location/location.dart' as loc;
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
   runApp(MyApp());
   WidgetsFlutterBinding.ensureInitialized();
-  ServiceStatus serviceStatus =
-      await LocationPermissions().checkServiceStatus();
-  if (serviceStatus.toString() == "ServiceStatus.disabled") {
-    loc.Location locationR = loc.Location();
-    if (!await locationR.serviceEnabled()) {
-      locationR.requestService();
-    }
-  }
   SharedPreferences prefs = await SharedPreferences.getInstance();
   if (prefs.getString('name') != null) {
     LoginScreen.name = prefs.getString('name');
     LoginScreen.email = prefs.getString('email');
     LoginScreen.address = prefs.getString('address');
   }
-  print(serviceStatus.toString());
+
 }
 
 class MyApp extends StatelessWidget {
@@ -55,17 +40,7 @@ class MyApp extends StatelessWidget {
   }
 }
 
-class SplashScreenPage extends StatefulWidget {
-  @override
-  _SplashScreenPageState createState() => _SplashScreenPageState();
-}
-
-class _SplashScreenPageState extends State<SplashScreenPage> {
-  @override
-  initState() {
-    FirebaseAuth auth = FirebaseAuth.instance;
-  }
-
+class SplashScreenPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SplashScreen(
@@ -78,53 +53,48 @@ class _SplashScreenPageState extends State<SplashScreenPage> {
       loaderColor: Colors.red,
     );
   }
+
+  check() {
+    print("Test");
+    runApp(MaterialApp(home: LoginScreen.name != '' ? Home() : LoginScreen()));
+  }
 }
 
 class LoginScreen extends StatefulWidget {
-  static var name, body, email, address, phone;
+  static var name, body, email, address;
   static var session = FlutterSession();
   static dynamic token;
-
   @override
   _LoginScreenState createState() => _LoginScreenState();
 }
 
 class _LoginScreenState extends State<LoginScreen> {
-  ProgressDialog pr;
-  bool loading = false;
-  final db = FirebaseFirestore.instance;
   @override
   void initState() {
     super.initState();
-    pr = new ProgressDialog(context,
-        type: ProgressDialogType.Normal, isDismissible: false);
-    pr.style(message: "Logging in...");
-    AskForPermission();
-    runApp(MaterialApp(home: LoginScreen.name != "" ? Home() : LoginScreen()));
-  }
+    runApp(MaterialApp(home: LoginScreen.name != '' ? Home() : LoginScreen()));
 
+  }
   var _emcontroller = TextEditingController();
   var _passwordcontroller = TextEditingController();
   String _em = "";
   String _pw = "";
-  SharedPreferences prefs;
   bool _showPassword = true;
   bool _enabled = false;
   bool emailValid;
-  User user;
-
   void showToast() {}
   void onPressVisibility(int no) {
     setState(() {
-      if (no == 1) {
-        _showPassword = !_showPassword;
-      } else {}
+      if(no == 1){_showPassword = !_showPassword;}
+      else{}
+
     });
   }
 
   @override
   Widget build(BuildContext context) {
     SystemChrome.setEnabledSystemUIOverlays([]);
+    TextEditingController pwcontroller;
     return MaterialApp(
         title: 'Material App',
         home: Scaffold(
@@ -144,13 +114,9 @@ class _LoginScreenState extends State<LoginScreen> {
                                 controller: _emcontroller,
                                 onChanged: (_emcontroller) {
                                   _em = _emcontroller;
-                                  emailValid = RegExp(
-                                          r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+")
-                                      .hasMatch(_em);
+                                  emailValid = RegExp(r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+").hasMatch(_em);
                                   this.enable();
-                                  if (emailValid = RegExp(
-                                          r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+")
-                                      .hasMatch(_em)) {
+                                  if(emailValid = RegExp(r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+").hasMatch(_em)){
                                     enable();
                                   }
                                 },
@@ -177,7 +143,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                     onChanged: (_passwordcontroller) {
                                       _pw = _passwordcontroller;
                                       this.enable();
-                                      if (_pw != '') {
+                                      if(_pw != ''){
                                         enable();
                                       }
                                     },
@@ -203,12 +169,12 @@ class _LoginScreenState extends State<LoginScreen> {
                           ),
                           GestureDetector(
                               child: Text(
-                            'Forgot password?',
-                            style: new TextStyle(
-                              fontSize: 16,
-                              color: Colors.red,
-                            ),
-                          )),
+                                'Forgot password?',
+                                style: new TextStyle(
+                                  fontSize: 16,
+                                  color: Colors.red,
+                                ),
+                              )),
                           Container(
                             height: 10,
                           ),
@@ -235,9 +201,7 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   enable() {
-    if (RegExp(r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+")
-            .hasMatch(_em) &&
-        _pw != '') {
+    if (RegExp(r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+").hasMatch(_em) && _pw != '') {
       _enabled = true;
       onPressVisibility(2);
     } else {
@@ -247,118 +211,58 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   Future<void> _onLogin() async {
-    await pr.show();
     _em = _emcontroller.text;
     _pw = _passwordcontroller.text;
+    ProgressDialog pr = new ProgressDialog(context,
+        type: ProgressDialogType.Normal, isDismissible: false);
+    pr.style(message: "Login...");
+    await pr.show();
+    http.post("https://starxdev.com/stiw2044/login_user.php", body: {
+      "email": _em,
+      "password": _pw,
+    }).then((res) async {
+      if (res.body.contains("name")) {
+        await LoginScreen.session.set('user', _em);
+        LoginScreen.token = await LoginScreen.session.get('user');
+        print(json.decode(res.body));
+        LoginScreen.body = json.decode(res.body);
+        //await LoginScreen.session.set('name', LoginScreen.body[0]['name']);
+        //await LoginScreen.session.set('email', LoginScreen.body[0]['email']);
+        //await LoginScreen.session.set('address', LoginScreen.body[0]['address']);
 
-    try {
-      UserCredential userCredential = await FirebaseAuth.instance
-          .signInWithEmailAndPassword(email: _em, password: _pw);
+        SharedPreferences prefs = await SharedPreferences.getInstance();
+        prefs.setString('name', LoginScreen.body[0]['name']);
+        prefs.setString('email', LoginScreen.body[0]['email']);
+        prefs.setString('address', LoginScreen.body[0]['address']);
 
-      FirebaseFirestore.instance
-          .collection('Users')
-          .doc(_em)
-          .get()
-          .then((DocumentSnapshot documentSnapshot) async {
-        if (documentSnapshot.exists) {
-          prefs = await SharedPreferences.getInstance();
-          prefs.setString('name', documentSnapshot.get("name"));
-          prefs.setString('email', documentSnapshot.get("email"));
-          prefs.setString('address', documentSnapshot.get("address"));
-          prefs.setString('phone', documentSnapshot.get("phone"));
-          LoginScreen.name = prefs.getString('name');
-          LoginScreen.email = prefs.getString('email');
-          LoginScreen.address = prefs.getString('address');
-          LoginScreen.phone = prefs.getString('phone');
-          checkEmailVerified();
-        }
-      });
-    } on FirebaseAuthException catch (e) {
-      if (e.code == 'user-not-found') {
+        LoginScreen.name = prefs.getString('name');
+        LoginScreen.email = prefs.getString('email');
+        LoginScreen.address = prefs.getString('address');
         Toast.show(
-          'No user found for that email.',
+          "Login Success",
           context,
           duration: Toast.LENGTH_LONG,
-          gravity: Toast.BOTTOM,
+          gravity: Toast.TOP,
         );
-        pr.hide();
-        print('No user found for that email.');
-      } else if (e.code == 'wrong-password') {
+        Navigator.pushReplacement(context,
+            MaterialPageRoute(builder: (BuildContext context) => Home()));
+      } else {
         Toast.show(
-          'Wrong password provided for that user.',
+          "Login failed",
           context,
           duration: Toast.LENGTH_LONG,
-          gravity: Toast.BOTTOM,
+          gravity: Toast.TOP,
         );
-        pr.hide();
-        print('Wrong password provided for that user.');
-      } else if (e.code == 'too-many-requests') {
-        Toast.show(
-          'Too many request in a short time try again after a few minutes',
-          context,
-          duration: Toast.LENGTH_LONG,
-          gravity: Toast.BOTTOM,
-        );
-        pr.hide();
-        print("Too many request in a short time try again after a few minutes");
       }
-    } catch (e) {
-      print(e.code + " test");
-    }
-  }
+    }).catchError((err) {
+      print(err);
+    });
 
-  Future<void> checkEmailVerified() async {
-    final auth = FirebaseAuth.instance;
-    user = auth.currentUser;
-    if (user.emailVerified) {
-      print("it runs");
-      if (LoginScreen.name != "" &&
-          LoginScreen.email != "" &&
-          LoginScreen.address != "") {
-        Future.delayed(const Duration(milliseconds: 1000), () {
-          pr.hide();
-          Toast.show(
-            "Login Success",
-            context,
-            duration: Toast.LENGTH_LONG,
-            gravity: Toast.TOP,
-          );
-          Navigator.pushReplacement(
-              context,
-              MaterialPageRoute(
-                  builder: (BuildContext context) => Home(),
-                  settings: RouteSettings(
-                    arguments: LoginScreen.email,
-                  )));
-        });
-      }
-    } else {
-      prefs.setString('name', "");
-          prefs.setString('email', "");
-          prefs.setString('address', "");
-          prefs.setString('phone', "");
-      pr.hide();
-      Toast.show(
-        "Please verify your email first",
-        context,
-        duration: Toast.LENGTH_LONG,
-        gravity: Toast.TOP,
-      );
-    }
+    await pr.hide();
   }
 
   void _onRegister() {
     Navigator.push(context,
         MaterialPageRoute(builder: (BuildContext context) => Register()));
-  }
-}
-
-class CircularProgressIndicatorApp extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return CircularProgressIndicator(
-      backgroundColor: Colors.black12,
-      strokeWidth: 8,
-    );
   }
 }

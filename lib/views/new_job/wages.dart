@@ -2,47 +2,70 @@ import 'package:flutter/material.dart';
 import 'package:my_helper/models/Trip.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
-
- 
-class NewJobWagesView extends StatelessWidget {
-  final db = Firestore.instance;
+class NewJobWagesView extends StatefulWidget {
   final Trip job;
+
   NewJobWagesView({Key key, @required this.job}) : super(key: key);
+
+  @override
+  _NewJobWagesViewState createState() => _NewJobWagesViewState();
+}
+
+class _NewJobWagesViewState extends State<NewJobWagesView> {
+  final db = FirebaseFirestore.instance;
+  TextEditingController wagesController = new TextEditingController();
   @override
   Widget build(BuildContext context) {
     TextEditingController _titleController = new TextEditingController();
-    _titleController.text = job.title;
+    _titleController.text = widget.job.title;
+    String wages;
     return Scaffold(
         appBar: AppBar(
-          title: Text('Post New Job - Wages'),
-          
+          title: Text('Post New Job - ${widget.job.title}'),
         ),
         body: Center(
-          child:  Column(
+          child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            Text("Finish"),
-            Text("Job Name: ${job.title}"),
-            Text("Job Date: ${job.startDate}"),
-            
+            children: <Widget>[
+              Text("Enter wages"),
+              Padding(
+                padding: const EdgeInsets.all(30.0),
+                child: TextField(
+                  controller: wagesController,
+                  onChanged: (text) {
+                    wages = text;
 
-            RaisedButton(
-              child: Text("Finish"),
-              onPressed: () async {
-                //save data to firebase
-                await db.collection("Jobs").add(
-                  {
-                  'title': job.title,
-                  'startDate': job.startDate,
-                  }
-                );
-                Navigator.of(context).popUntil((route) => route.isFirst);
-              },
-            )
-        ],
-      )
-        ,) 
-       
-    );
+                    if (wages != '') {}
+                  },
+                  autofocus: true,
+                  decoration: InputDecoration(
+                    hintText: 'Enter a wages in (RM)',
+                    focusColor: Colors.red[500],
+                    hoverColor: Colors.red[500],
+                    fillColor: Colors.red[500],
+                    border: OutlineInputBorder(
+                      borderSide: BorderSide(color: Colors.red[500]),
+                    ),
+                  ),
+                ),
+              ),
+              RaisedButton(
+                child: Text("Finish"),
+                onPressed: () async {
+                  widget.job.wages =wages;
+                  //save data to firebase
+                  await db.collection("Jobs").add({
+                    'title': widget.job.title,
+                    'startDate': widget.job.startDate,
+                    'endDate' : widget.job.endDate,
+                    'wages' : widget.job.wages,
+                    'address' : widget.job.address
+                  });
+                  Navigator.of(context).popUntil((route) => route.isFirst);
+                },
+              )
+            ],
+          ),
+        ));
   }
 }
