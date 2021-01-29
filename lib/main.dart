@@ -37,6 +37,7 @@ Future<void> main() async {
     LoginScreen.name = prefs.getString('name');
     LoginScreen.email = prefs.getString('email');
     LoginScreen.address = prefs.getString('address');
+    LoginScreen.image = prefs.getString('image');
   }
   print(serviceStatus.toString());
 }
@@ -81,7 +82,7 @@ class _SplashScreenPageState extends State<SplashScreenPage> {
 }
 
 class LoginScreen extends StatefulWidget {
-  static var name, body, email, address, phone;
+  static var name, body, email, address, phone, image;
   static var session = FlutterSession();
   static dynamic token;
 
@@ -266,10 +267,12 @@ class _LoginScreenState extends State<LoginScreen> {
           prefs.setString('email', documentSnapshot.get("email"));
           prefs.setString('address', documentSnapshot.get("address"));
           prefs.setString('phone', documentSnapshot.get("phone"));
+          prefs.setString('image', documentSnapshot.get("image"));
           LoginScreen.name = prefs.getString('name');
           LoginScreen.email = prefs.getString('email');
           LoginScreen.address = prefs.getString('address');
           LoginScreen.phone = prefs.getString('phone');
+          LoginScreen.image = prefs.getString('image');
           checkEmailVerified();
         }
       });

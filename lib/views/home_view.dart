@@ -1,7 +1,10 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:my_helper/main.dart';
+import 'package:hexcolor/hexcolor.dart';
 
 class HomeView extends StatefulWidget {
   @override
@@ -21,7 +24,6 @@ class _HomeViewState extends State<HomeView> {
   @override
   Widget build(BuildContext context) {
     return Container(
-        child: Card(
       child: Padding(
         padding: const EdgeInsets.all(16.0),
         child: StreamBuilder(
@@ -37,18 +39,33 @@ class _HomeViewState extends State<HomeView> {
                   itemBuilder: (context, index) {
                     DocumentSnapshot job = snapshot.data.docs[index];
                     return SingleChildScrollView(
-                            child: _getRegisteredAddress() == _getAddress(job["address"])
-                        ? null
-                        : ListTile(
-                            leading: Image.network(
-                                "https://eitrawmaterials.eu/wp-content/uploads/2016/09/person-icon.png"),
-                            title: Text(job["title"]),
-                            subtitle: Text(job["address"]),
-                          ));
+                        child: _getRegisteredAddress() ==
+                                _getAddress(job["address"])
+                            ? null
+                            : Card(
+                                color: Colors.red[500],
+                                child: ListTile(
+                                  leading: CircleAvatar(
+                                    backgroundImage: MemoryImage(base64.decode(job[
+                                        'image'])),
+                                  ),
+                                  title: Text(
+                                    job["title"],
+                                    style: TextStyle(
+                                      color: Colors.white,
+                                    ),
+                                  ),
+                                  subtitle: Text(
+                                    job["address"],
+                                    style: TextStyle(
+                                      color: Colors.white,
+                                    ),
+                                  ),
+                                )));
                   });
             }),
       ),
-    ));
+    );
   }
 
   _getAddress(address) async {
@@ -60,7 +77,7 @@ class _HomeViewState extends State<HomeView> {
   _getRegisteredAddress() async {
     List<Placemark> placemarkR =
         await Geolocator().placemarkFromAddress(LoginScreen.address);
-        print(placemarkR[0].postalCode);
+    print(placemarkR[0].postalCode);
     return placemarkR[0].postalCode;
   }
 }

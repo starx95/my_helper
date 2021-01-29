@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:my_helper/models/Trip.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
+import '../../main.dart';
+
 class NewJobWagesView extends StatefulWidget {
   final Trip job;
 
@@ -59,7 +61,9 @@ class _NewJobWagesViewState extends State<NewJobWagesView> {
                     'startDate': widget.job.startDate,
                     'endDate' : widget.job.endDate,
                     'wages' : widget.job.wages,
-                    'address' : widget.job.address
+                    'address' : widget.job.address,
+                    'employer' : LoginScreen.email,
+                    'image' : LoginScreen.image,
                   });
                   Navigator.of(context).popUntil((route) => route.isFirst);
                 },

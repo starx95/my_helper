@@ -1,7 +1,12 @@
+import 'dart:convert';
+import 'dart:io';
+import 'dart:typed_data';
+
 import 'package:email_validator/email_validator.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:geocoder/geocoder.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:my_helper/main.dart';
 import 'package:maps_launcher/maps_launcher.dart';
 import 'package:geolocator/geolocator.dart';
@@ -38,6 +43,7 @@ class _Register extends State<Register> {
   String _phone = "";
   String _address = "";
   String _email = "";
+  Uint8List imageBytess;
   List<Marker> myMarker = [];
   GoogleMapController myController;
   bool _passwordVisible = false;
@@ -45,6 +51,10 @@ class _Register extends State<Register> {
   bool _isnotVisible = true;
   bool monVal = false;
   String title = "";
+  final _pick = ImagePicker();
+  File _fimage;
+  String photoBase64;
+  String fileName;
   bool _isButtonDisabled = true;
   final db = FirebaseFirestore.instance;
   final Geolocator geolocator = Geolocator()..forceAndroidLocationManager;
@@ -181,6 +191,20 @@ class _Register extends State<Register> {
     });
   }
 
+  Future _getImage() async {
+    final pickedfile = await _pick.getImage(source: ImageSource.gallery);
+    setState(() {
+      if (pickedfile != null) {
+        _fimage = File(pickedfile.path);
+        imageBytess = _fimage.readAsBytesSync();
+        photoBase64 = base64Encode(imageBytess);
+        fileName = pickedfile.path.split('/').last;
+      } else {
+        print('No image selected.');
+      }
+    });
+  }
+
   _getAddressFromLatLng() async {
     try {
       final coordinates = new Coordinates(
@@ -213,9 +237,14 @@ class _Register extends State<Register> {
               child: SingleChildScrollView(
                   child: Column(
                 children: [
-                  Image.asset('assets/images/myHelper.png',
-                      width: 300, height: 300),
                   Text('REGISTER'),
+                  GestureDetector(
+                    onTap: _getImage,
+                    child: CircleAvatar(
+                      radius: 70,
+                      backgroundImage: imageBytess == null? NetworkImage("https://toppng.com/uploads/preview/donna-picarro-dummy-avatar-115633298255iautrofxa.png") : MemoryImage(imageBytess),
+                    ),
+                  ),
                   Form(
                     autovalidateMode: AutovalidateMode.always,
                     key: _formKeys,
@@ -477,7 +506,6 @@ class _Register extends State<Register> {
       UserCredential userCredential = await FirebaseAuth.instance
           .createUserWithEmailAndPassword(email: _email, password: _password);
       var user = await FirebaseAuth.instance.currentUser;
-      print("test :" + userCredential.toString() + " test ");
 
       await FirebaseAuth.instance.currentUser.updateProfile(
         displayName: _name,
@@ -487,7 +515,8 @@ class _Register extends State<Register> {
         'name': _name,
         'address': _address,
         'email': _email,
-        'phone': _phone
+        'phone': _phone,
+        'image': photoBase64
       });
 
       user.sendEmailVerification();
@@ -513,43 +542,6 @@ class _Register extends State<Register> {
     } catch (e) {
       print(e);
     }
-
-    // http.post("https://starxdev.com/stiw2044/register_user.php", body: {
-    //   "name": _name,
-    //   "address": _address,
-    //   "password": _password,
-    //   "email": _email,
-    // }).then((res) {
-    //   if (res.body.contains('Duplicate')) {
-    //     Toast.show(
-    //       "Registration failed Email address already exist",
-    //       context,
-    //       duration: Toast.LENGTH_LONG,
-    //       gravity: Toast.TOP,
-    //     );
-    //   }
-    //   if (res.body == "succes") {
-    //     Toast.show(
-    //       "Registration success. An email has been sent to the registered email. Please check your email for OTP verification.",
-    //       context,
-    //       duration: Toast.LENGTH_LONG,
-    //       gravity: Toast.TOP,
-    //     );
-    //     if (_rememberMe) {
-    //       savepref();
-    //     }
-    //     _onLogin();
-    //   } else {
-    //     Toast.show(
-    //       "Registration failed",
-    //       context,
-    //       duration: Toast.LENGTH_LONG,
-    //       gravity: Toast.TOP,
-    //     );
-    //   }
-    // }).catchError((err) {
-    //   print(err);
-    // });
     await pr.hide();
   }
 

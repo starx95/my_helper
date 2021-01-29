@@ -1,3 +1,5 @@
+import 'dart:typed_data';
+
 import 'package:flutter/material.dart';
 import 'package:geocoder/geocoder.dart';
 import 'package:my_helper/Home.dart';
@@ -12,6 +14,8 @@ import 'dart:io';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:path_provider/path_provider.dart';
 
 class Profile extends StatefulWidget {
   @override
@@ -20,6 +24,7 @@ class Profile extends StatefulWidget {
 
 class _ProfileState extends State<Profile> {
   bool _rememberMe = false;
+  String photoBase64;
   TextEditingController name = TextEditingController();
   TextEditingController phone = TextEditingController();
   TextEditingController address = TextEditingController();
@@ -33,7 +38,7 @@ class _ProfileState extends State<Profile> {
   File _fimage;
   final _pick = ImagePicker();
   var _addcontroller = TextEditingController();
-
+  Uint8List imageBytess;
   Position _currentPosition;
   LatLng _center = const LatLng(6.457510, 100.505455);
   double latitude, longitude;
@@ -43,8 +48,11 @@ class _ProfileState extends State<Profile> {
   GoogleMapController myController;
   bool monVal = false;
   String title = "";
+  Image image;
   bool _isButtonDisabled = true;
   final Geolocator geolocator = Geolocator()..forceAndroidLocationManager;
+  final db = FirebaseFirestore.instance;
+  
 
   @override
   void initState() {
@@ -54,6 +62,7 @@ class _ProfileState extends State<Profile> {
     name.text = LoginScreen.name;
     phone.text = LoginScreen.email;
     address.text = LoginScreen.address;
+    imageBytess = base64.decode(LoginScreen.image);
   }
 
   Future _getImage() async {
@@ -61,6 +70,7 @@ class _ProfileState extends State<Profile> {
     setState(() {
       if (pickedfile != null) {
         _fimage = File(pickedfile.path);
+        imageBytess = _fimage.readAsBytesSync();
         fileName = pickedfile.path.split('/').last;
       } else {
         print('No image selected.');
@@ -75,59 +85,21 @@ class _ProfileState extends State<Profile> {
   }
 
   startUpload(names, emails, addresses) async {
-    http.post("https://starxdev.com/stiw2044/updateuser.php", body: {
-      "emaillama": LoginScreen.email,
-      "name": names,
-      "address": addresses,
-      "email": emails,
-    }).then((res) {
-      print(res.body);
-      if (res.body.contains('Duplicate')) {
-        Toast.show(
-          "Update failed",
-          context,
-          duration: Toast.LENGTH_LONG,
-          gravity: Toast.TOP,
-        );
-      }
-      if (res.body == "succes") {
-        Toast.show(
-          "Update success",
-          context,
-          duration: Toast.LENGTH_LONG,
-          gravity: Toast.TOP,
-        );
-        LoginScreen.name = names;
-        LoginScreen.email = emails;
-        LoginScreen.address = addresses;
-        Navigator.push(
-          context,
-          MaterialPageRoute(builder: (context) => Home()),
-        );
-      } else {
-        Toast.show(
-          "Update failed",
-          context,
-          duration: Toast.LENGTH_LONG,
-          gravity: Toast.TOP,
-        );
-      }
-    }).catchError((err) {
-      print(err);
-    });
-    http.post("https://starxdev.com/stiw2044/uploadimage.php", body: {
-      "image": base64Image,
-      "name": fileName,
-    }).then((res) {
-      print(res.statusCode);
-    }).catchError((err) {
-      print(err);
+    var firebaseUser = FirebaseAuth.instance.currentUser;
+    List<int> imageBytes = _fimage.readAsBytesSync();
+    photoBase64 = base64Encode(imageBytes);
+    print(photoBase64 + " test");
+    db.collection("Users").doc(LoginScreen.email).update(
+        {"name": names, "address": addresses, "image": photoBase64}).then((_) {
+      Toast.show("Profile Updated", context);
     });
   }
 
   @override
   Widget build(BuildContext context) {
+    ThemeData theme = Theme.of(context);
     return Scaffold(
+      resizeToAvoidBottomInset: false,
       body: Center(
         child: Container(
           padding: EdgeInsets.all(10),
@@ -136,7 +108,7 @@ class _ProfileState extends State<Profile> {
               onTap: _getImage,
               child: CircleAvatar(
                 radius: 70,
-                backgroundImage: _fimage == null ? null : FileImage(_fimage),
+                backgroundImage: MemoryImage(imageBytess),
               ),
             ),
             TextFormField(
@@ -152,14 +124,17 @@ class _ProfileState extends State<Profile> {
             ),
             TextFormField(
               controller: phone,
+              style: theme.textTheme.subtitle1.copyWith(
+                color: theme.disabledColor,
+              ),
               decoration: InputDecoration(
-                labelText: 'Phone',
-                icon: const Icon(Icons.phone),
+                labelText: 'Email',
+                icon: const Icon(Icons.mail),
                 labelStyle: new TextStyle(
                   color: Colors.red[500],
                 ),
               ),
-              enabled: true,
+              enabled: false,
             ),
             TextFormField(
               controller: address,

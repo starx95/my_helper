@@ -59,13 +59,10 @@ class _homescreen extends State<Home> {
           accountEmail:
               Text(LoginScreen.email == "" ? LoginScreen() : LoginScreen.email),
           currentAccountPicture: CircleAvatar(
+            backgroundImage: MemoryImage(base64.decode(LoginScreen.image)),
             backgroundColor: Theme.of(context).platform == TargetPlatform.iOS
                 ? Colors.blue
                 : Colors.white,
-            child: Text(
-              "N",
-              style: TextStyle(fontSize: 40.0),
-            ),
           ),
           decoration: BoxDecoration(
             image: DecorationImage(
