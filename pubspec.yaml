@@ -39,7 +39,7 @@ dependencies:
   flutter_session: ^0.1.1
   flutter_redux: ^0.7.0
   circular_profile_avatar: ^1.0.6
-  image_picker: ^0.6.7+14
+  image_picker: ^0.6.7+22
   email_validator: ^1.0.0
   persistent_bottom_nav_bar: any
   cloud_firestore: ^0.16.0

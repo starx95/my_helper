@@ -33,7 +33,6 @@ class _homescreen extends State<Home> {
 
   @override
   Widget build(BuildContext context) {
-    //_getProfile();
     final newJob = new Trip(null, null, null, null, null);
     return Scaffold(
       appBar: AppBar(

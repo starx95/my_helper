@@ -69,15 +69,15 @@ class _HomeViewState extends State<HomeView> {
   }
 
   _getAddress(address) async {
-    placemark = await Geolocator().placemarkFromAddress(address);
-    print(placemark[0].postalCode);
-    return placemark[0].postalCode;
+    // placemark = await Geolocator().placemarkFromAddress(address);
+    // print(placemark[0].postalCode);
+    // return placemark[0].postalCode;
   }
 
   _getRegisteredAddress() async {
-    List<Placemark> placemarkR =
-        await Geolocator().placemarkFromAddress(LoginScreen.address);
-    print(placemarkR[0].postalCode);
-    return placemarkR[0].postalCode;
+    // List<Placemark> placemarkR =
+    //     await Geolocator().placemarkFromAddress(LoginScreen.address);
+    // print(placemarkR[0].postalCode);
+    // return placemarkR[0].postalCode;
   }
 }
