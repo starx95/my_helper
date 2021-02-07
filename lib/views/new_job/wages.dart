@@ -56,7 +56,7 @@ class _NewJobWagesViewState extends State<NewJobWagesView> {
                 onPressed: () async {
                   widget.job.wages =wages;
                   //save data to firebase
-                  await db.collection("Jobs").add({
+                  await db.collection("Jobs").doc(LoginScreen.email).set({
                     'title': widget.job.title,
                     'startDate': widget.job.startDate,
                     'endDate' : widget.job.endDate,
@@ -64,6 +64,7 @@ class _NewJobWagesViewState extends State<NewJobWagesView> {
                     'address' : widget.job.address,
                     'employer' : LoginScreen.email,
                     'image' : LoginScreen.image,
+                    'bookedBy' : null
                   });
                   Navigator.of(context).popUntil((route) => route.isFirst);
                 },

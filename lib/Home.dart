@@ -35,9 +35,10 @@ class _homescreen extends State<Home> {
   Widget build(BuildContext context) {
     final newJob = new Trip(null, null, null, null, null);
     return Scaffold(
+
       appBar: AppBar(
-        backgroundColor: Colors.red[500],
-        title: Text("Main Screen"),
+        backgroundColor: Colors.pink[700],
+        title: Text("MyHelper"),
         actions: <Widget>[
           IconButton(
             icon: Icon(Icons.add),
@@ -54,9 +55,9 @@ class _homescreen extends State<Home> {
           child: ListView(padding: EdgeInsets.zero, children: <Widget>[
         UserAccountsDrawerHeader(
           accountName:
-              Text(LoginScreen.name == "" ? LoginScreen() : LoginScreen.name),
+              Text(LoginScreen.name == null ? LoginScreen() : LoginScreen.name),
           accountEmail:
-              Text(LoginScreen.email == "" ? LoginScreen() : LoginScreen.email),
+              Text(LoginScreen.email == null ? LoginScreen() : LoginScreen.email),
           currentAccountPicture: CircleAvatar(
             backgroundImage: MemoryImage(base64.decode(LoginScreen.image)),
             backgroundColor: Theme.of(context).platform == TargetPlatform.iOS
@@ -88,17 +89,17 @@ class _homescreen extends State<Home> {
             BottomNavigationBarItem(
               icon: Icon(Icons.home),
               label: 'Home',
-              backgroundColor: Colors.red[500],
+              backgroundColor: Colors.pink[700],
             ),
             BottomNavigationBarItem(
               icon: Icon(Icons.person),
               label: 'Profile',
-              backgroundColor: Colors.red[500],
+              backgroundColor: Colors.pink[700],
             ),
             BottomNavigationBarItem(
               icon: Icon(Icons.settings),
               label: 'Settings',
-              backgroundColor: Colors.red[500],
+              backgroundColor: Colors.pink[700],
             ),
           ],
           type: BottomNavigationBarType.shifting,

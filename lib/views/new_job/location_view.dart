@@ -113,7 +113,7 @@ class _NewJobLocationViewState extends State<NewJobLocationView> {
     
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Colors.red[500],
+        backgroundColor: Colors.pink[500],
         title: Text('Post New Job'),
       ),
       body: Column(
@@ -134,12 +134,12 @@ class _NewJobLocationViewState extends State<NewJobLocationView> {
               },
               autofocus: true,
               decoration: InputDecoration(
-                focusColor: Colors.red[500],
-                hoverColor: Colors.red[500],
-                fillColor: Colors.red[500],
+                focusColor: Colors.pink[500],
+                hoverColor: Colors.pink[500],
+                fillColor: Colors.pink[500],
                 border: OutlineInputBorder(
                   borderSide: BorderSide(
-                    color: Colors.red[500]),
+                    color: Colors.pink[500]),
                 ),
               ),
             ),
@@ -162,7 +162,7 @@ class _NewJobLocationViewState extends State<NewJobLocationView> {
             icon: Icon(Icons.map), //icon image
             label: Text('Open Map'), //text to show in button
             textColor: Colors.white, //button text and icon color.
-            color: Colors.red[500], //button background color
+            color: Colors.pink[500], //button background color
             onPressed: () async {
               await showMapDialog(context);
             },
@@ -170,7 +170,7 @@ class _NewJobLocationViewState extends State<NewJobLocationView> {
           FlatButton.icon(
             shape: new RoundedRectangleBorder(
                 borderRadius: new BorderRadius.circular(30.0)),
-            color: Colors.red[500],
+            color: Colors.pink[500],
             textColor: Colors.white,
             label: Text("Continue"),
             icon: Icon(Icons.arrow_forward),

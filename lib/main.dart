@@ -101,7 +101,7 @@ class _LoginScreenState extends State<LoginScreen> {
         type: ProgressDialogType.Normal, isDismissible: false);
     pr.style(message: "Logging in...");
     AskForPermission();
-    runApp(MaterialApp(home: LoginScreen.name != "" ? Home() : LoginScreen()));
+    runApp(MaterialApp(home: LoginScreen.name != null ? Home() : LoginScreen()));
   }
 
   var _emcontroller = TextEditingController();

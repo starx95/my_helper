@@ -32,7 +32,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Splash Screen',
       theme: ThemeData(
-        primarySwatch: Colors.red,
+        primarySwatch: Colors.pink[400],
       ),
       home: SplashScreenPage(),
       debugShowCheckedModeBanner: false,
@@ -50,7 +50,7 @@ class SplashScreenPage extends StatelessWidget {
       image: new Image.asset('assets/images/myHelper.png'),
       loadingText: Text("Loading"),
       photoSize: 150.0,
-      loaderColor: Colors.red,
+      loaderColor: Colors.pink[400],
     );
   }
 
@@ -124,7 +124,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                 decoration: InputDecoration(
                                     labelText: 'Email',
                                     labelStyle: new TextStyle(
-                                      color: Colors.red,
+                                      color: Colors.pink[400],
                                     ),
                                     icon: const Icon(Icons.email)),
                               ),
@@ -159,7 +159,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                               onPressVisibility(1);
                                             }),
                                         labelStyle: new TextStyle(
-                                          color: Colors.red,
+                                          color: Colors.pink[400],
                                         ),
                                         icon: const Icon(Icons.lock)),
                                     obscureText: _showPassword,
@@ -172,7 +172,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                 'Forgot password?',
                                 style: new TextStyle(
                                   fontSize: 16,
-                                  color: Colors.red,
+                                  color: Colors.pink[400],
                                 ),
                               )),
                           Container(
@@ -181,7 +181,7 @@ class _LoginScreenState extends State<LoginScreen> {
                           Container(
                               width: 200,
                               child: RaisedButton(
-                                color: Colors.red[300],
+                                color: Colors.pink[300],
                                 shape: RoundedRectangleBorder(
                                     borderRadius: BorderRadius.all(
                                         Radius.circular(16.0))),

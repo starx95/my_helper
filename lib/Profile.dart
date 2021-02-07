@@ -157,7 +157,7 @@ class _ProfileState extends State<Profile> {
             MaterialButton(
               child: Text("SAVE"),
               onPressed: () => startUpload(name.text, phone.text, address.text),
-              color: Colors.red[500],
+              color: Colors.pink[500],
             )
           ]),
         ),
