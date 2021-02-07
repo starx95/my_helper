@@ -595,14 +595,13 @@ class CustomSliverDelegate extends SliverPersistentHeaderDelegate {
             height: appBarSize < kToolbarHeight ? kToolbarHeight : appBarSize,
             child: AppBar(
               backgroundColor: Colors.pink[800],
-              leading: IconButton(
-                icon: Icon(Icons.menu),
-                onPressed: () {},
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.vertical(
+                  bottom: Radius.circular(15),
+                ),
               ),
               elevation: 0.0,
-              title: Opacity(
-                  opacity: hideTitleWhenExpanded ? 1.0 - percent : 1.0,
-                  child: Text("MyHelper")),
+              title: Center(child:Text("MyHelper")),
             ),
           ),
           Positioned(
@@ -620,9 +619,11 @@ class CustomSliverDelegate extends SliverPersistentHeaderDelegate {
                     child: ListTile(
                       title: Row(
                         children: [
-                          Padding(padding: EdgeInsets.only(right:5),child: Icon(Icons.account_circle_outlined,
-                              color: Colors.orange[900]),),
-                          
+                          Padding(
+                            padding: EdgeInsets.only(right: 5),
+                            child: Icon(Icons.account_circle_outlined,
+                                color: Colors.orange[900]),
+                          ),
                           Flexible(
                             child: Text(
                               LoginScreen.name,
@@ -643,9 +644,11 @@ class CustomSliverDelegate extends SliverPersistentHeaderDelegate {
                         ),
                         child: Row(
                           children: [
-                             Padding(padding: EdgeInsets.only(right:5),child:
-                            Icon(Icons.location_on_outlined,
-                                color: Colors.orange[900]),),
+                            Padding(
+                              padding: EdgeInsets.only(right: 5),
+                              child: Icon(Icons.location_on_outlined,
+                                  color: Colors.orange[900]),
+                            ),
                             Container(
                               width: 250,
                               child: Text(
@@ -680,4 +683,21 @@ class CustomSliverDelegate extends SliverPersistentHeaderDelegate {
   bool shouldRebuild(SliverPersistentHeaderDelegate oldDelegate) {
     return true;
   }
+}
+
+class CurvedClipper extends CustomClipper<Path> {
+  @override
+  Path getClip(Size size) {
+    var path = Path();
+    path.lineTo(0, size.height - 30);
+    path.quadraticBezierTo(
+        size.width / 2, size.height, size.width, size.height - 30);
+    path.lineTo(size.width, 0);
+
+    path.close();
+    return path;
+  }
+
+  @override
+  bool shouldReclip(CustomClipper<Path> oldClipper) => false;
 }
