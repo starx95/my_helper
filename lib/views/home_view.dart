@@ -58,7 +58,7 @@ class DotsIndicator extends AnimatedWidget {
       width: _kDotSpacing,
       child: new Center(
         child: new Material(
-          color: Colors.pink[400],
+          color: Colors.pink[800],
           type: MaterialType.circle,
           child: new Container(
             width: _kDotSize * zoom,
@@ -167,7 +167,7 @@ class _HomeViewState extends State<HomeView> {
                                             padding: const EdgeInsets.all(8.0),
                                             child: Icon(
                                               Icons.auto_fix_high,
-                                              color: Colors.pink[400],
+                                              color: Colors.pink[800],
                                               size: 60.0,
                                             ),
                                           ),
@@ -179,7 +179,7 @@ class _HomeViewState extends State<HomeView> {
                                             padding: const EdgeInsets.all(8.0),
                                             child: Icon(
                                               Icons.food_bank,
-                                              color: Colors.pink[400],
+                                              color: Colors.pink[800],
                                               size: 60.0,
                                             ),
                                           ),
@@ -191,7 +191,7 @@ class _HomeViewState extends State<HomeView> {
                                             padding: const EdgeInsets.all(8.0),
                                             child: Icon(
                                               Icons.local_laundry_service,
-                                              color: Colors.pink[400],
+                                              color: Colors.pink[800],
                                               size: 60.0,
                                             ),
                                           ),
@@ -203,7 +203,7 @@ class _HomeViewState extends State<HomeView> {
                                             padding: const EdgeInsets.all(8.0),
                                             child: Icon(
                                               Icons.cleaning_services,
-                                              color: Colors.pink[400],
+                                              color: Colors.pink[800],
                                               size: 60.0,
                                             ),
                                           ),
@@ -224,7 +224,7 @@ class _HomeViewState extends State<HomeView> {
                         dotWidth: 9.0,
                         dotHeight: 9.0,
                         dotColor: Colors.grey,
-                        activeDotColor: Colors.pink[400]),
+                        activeDotColor: Colors.pink[800]),
                   ),
                 )),
                 Padding(
@@ -263,7 +263,7 @@ class _HomeViewState extends State<HomeView> {
                                                 builder: (context) =>
                                                     JobDetail(job: job))),
                                         child: Card(
-                                          color: Colors.pink[400],
+                                          color: Colors.pink[800],
                                           child: ListTile(
                                             leading: CircleAvatar(
                                               backgroundImage: MemoryImage(
@@ -301,7 +301,7 @@ class _HomeViewState extends State<HomeView> {
               floatingActionButton: new FloatingActionButton(
                   elevation: 0.0,
                   child: new Icon(Icons.search),
-                  backgroundColor: Colors.pink[400],
+                  backgroundColor: Colors.pink[800],
                   onPressed: () {}))),
     );
   }

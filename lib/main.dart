@@ -33,7 +33,7 @@ Future<void> main() async {
     }
   }
   SharedPreferences prefs = await SharedPreferences.getInstance();
-  if (prefs.getString('name') != null) {
+  if (prefs.getString('name') != "") {
     LoginScreen.name = prefs.getString('name');
     LoginScreen.email = prefs.getString('email');
     LoginScreen.address = prefs.getString('address');
