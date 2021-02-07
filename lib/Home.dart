@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_session/flutter_session.dart';
 import 'package:http/http.dart' show get;
 import 'package:my_helper/views/home_view.dart';
+import 'package:my_helper/views/new_job/location_view.dart';
 import 'dart:convert';
 import 'Job.dart';
 import 'Profile.dart';
@@ -10,9 +11,8 @@ import 'main.dart';
 import 'package:my_helper/main.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'model.dart';
+import 'models/Trip.dart';
 import 'views/home_view.dart';
-import 'package:my_helper/views/new_job/location_view.dart';
-import 'package:my_helper/models/Trip.dart';
 
 class Home extends StatefulWidget {
   @override
@@ -21,11 +21,13 @@ class Home extends StatefulWidget {
 
 class _homescreen extends State<Home> {
   int _selectedIndex = 0;
+  final newJob = new Trip(null, null, null, null, null);
 
   @override
   initState() {}
   List<Widget> _options = <Widget>[
     HomeView(),
+    NewJobLocationView(job: null),
     Profile(),
     Text('Settings Screen',
         style: TextStyle(fontSize: 35, fontWeight: FontWeight.bold)),
@@ -33,31 +35,14 @@ class _homescreen extends State<Home> {
 
   @override
   Widget build(BuildContext context) {
-    final newJob = new Trip(null, null, null, null, null);
     return Scaffold(
-
-      appBar: AppBar(
-        backgroundColor: Colors.pink[700],
-        title: Text("MyHelper"),
-        actions: <Widget>[
-          IconButton(
-            icon: Icon(Icons.add),
-            onPressed: () {
-              Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) => NewJobLocationView(job: newJob)));
-            },
-          )
-        ],
-      ),
       drawer: Drawer(
           child: ListView(padding: EdgeInsets.zero, children: <Widget>[
         UserAccountsDrawerHeader(
           accountName:
               Text(LoginScreen.name == null ? LoginScreen() : LoginScreen.name),
-          accountEmail:
-              Text(LoginScreen.email == null ? LoginScreen() : LoginScreen.email),
+          accountEmail: Text(
+              LoginScreen.email == null ? LoginScreen() : LoginScreen.email),
           currentAccountPicture: CircleAvatar(
             backgroundImage: MemoryImage(base64.decode(LoginScreen.image)),
             backgroundColor: Theme.of(context).platform == TargetPlatform.iOS
@@ -80,8 +65,9 @@ class _homescreen extends State<Home> {
         ),
       ])),
       backgroundColor: Color(0xffFFFFFF),
-      resizeToAvoidBottomPadding: false,
-      body: Center(
+      body: Container(
+        height: (MediaQuery.of(context).size.height),
+        width: (MediaQuery.of(context).size.width),
         child: _options.elementAt(_selectedIndex),
       ),
       bottomNavigationBar: BottomNavigationBar(
@@ -89,6 +75,11 @@ class _homescreen extends State<Home> {
             BottomNavigationBarItem(
               icon: Icon(Icons.home),
               label: 'Home',
+              backgroundColor: Colors.pink[700],
+            ),
+            BottomNavigationBarItem(
+              icon: Icon(Icons.add),
+              label: 'Create Job',
               backgroundColor: Colors.pink[700],
             ),
             BottomNavigationBarItem(

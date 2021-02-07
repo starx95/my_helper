@@ -109,7 +109,7 @@ class _NewJobLocationViewState extends State<NewJobLocationView> {
   @override
   Widget build(BuildContext context) {
     _titleController = new TextEditingController();
-    _titleController.text = widget.job.title;
+    //_titleController.text = widget.job.title;
     
     return Scaffold(
       appBar: AppBar(
