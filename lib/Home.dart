@@ -15,6 +15,7 @@ import 'model.dart';
 import 'models/Trip.dart';
 import 'views/home_view.dart';
 import 'views/comments.dart';
+import 'package:keyboard_avoider/keyboard_avoider.dart';
 
 class Home extends StatefulWidget {
   @override
@@ -37,6 +38,8 @@ class _homescreen extends State<Home> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      resizeToAvoidBottomPadding: false,
+      resizeToAvoidBottomInset: true,
       drawer: Drawer(
           child: ListView(padding: EdgeInsets.zero, children: <Widget>[
         UserAccountsDrawerHeader(

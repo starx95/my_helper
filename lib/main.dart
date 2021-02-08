@@ -18,6 +18,7 @@ import 'package:location_permissions/location_permissions.dart';
 import 'package:location/location.dart' as loc;
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:keyboard_avoider/keyboard_avoider.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -51,6 +52,7 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.red,
         fontFamily: 'Roboto',
+        cursorColor: Color(0xffbe3e57),
       ),
       home: SplashScreenPage(),
       debugShowCheckedModeBanner: false,

@@ -59,6 +59,7 @@ dependencies:
   hexcolor: ^1.0.6
   smooth_page_indicator: ^0.2.0
   smooth_star_rating: ^1.1.1
+  keyboard_avoider: ^0.1.2
 
 
 dev_dependencies:
