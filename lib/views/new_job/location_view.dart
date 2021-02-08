@@ -113,8 +113,13 @@ class _NewJobLocationViewState extends State<NewJobLocationView> {
     
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Colors.pink[500],
+        backgroundColor: const Color(0xffbe3e57),
         title: Text('Post New Job'),
+        shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.vertical(
+                  bottom: Radius.circular(30),
+                ),
+              ),
       ),
       body: Column(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -132,14 +137,14 @@ class _NewJobLocationViewState extends State<NewJobLocationView> {
                 }
 
               },
-              autofocus: true,
+              autofocus: false,
               decoration: InputDecoration(
-                focusColor: Colors.pink[500],
-                hoverColor: Colors.pink[500],
-                fillColor: Colors.pink[500],
+                focusColor: const Color(0xffbe3e57),
+                hoverColor: Colors.pink[800],
+                fillColor: Colors.pink[800],
                 border: OutlineInputBorder(
                   borderSide: BorderSide(
-                    color: Colors.pink[500]),
+                    color: const Color(0xffbe3e57)),
                 ),
               ),
             ),
@@ -162,7 +167,7 @@ class _NewJobLocationViewState extends State<NewJobLocationView> {
             icon: Icon(Icons.map), //icon image
             label: Text('Open Map'), //text to show in button
             textColor: Colors.white, //button text and icon color.
-            color: Colors.pink[500], //button background color
+            color: const Color(0xffbe3e57), //button background color
             onPressed: () async {
               await showMapDialog(context);
             },
@@ -170,7 +175,7 @@ class _NewJobLocationViewState extends State<NewJobLocationView> {
           FlatButton.icon(
             shape: new RoundedRectangleBorder(
                 borderRadius: new BorderRadius.circular(30.0)),
-            color: Colors.pink[500],
+            color: const Color(0xffbe3e57),
             textColor: Colors.white,
             label: Text("Continue"),
             icon: Icon(Icons.arrow_forward),

@@ -38,6 +38,7 @@ Future<void> main() async {
     LoginScreen.email = prefs.getString('email');
     LoginScreen.address = prefs.getString('address');
     LoginScreen.image = prefs.getString('image');
+    LoginScreen.phone = prefs.getString('phone');
   }
   print(serviceStatus.toString());
 }
@@ -49,6 +50,7 @@ class MyApp extends StatelessWidget {
       title: 'Splash Screen',
       theme: ThemeData(
         primarySwatch: Colors.red,
+        fontFamily: 'Roboto',
       ),
       home: SplashScreenPage(),
       debugShowCheckedModeBanner: false,
@@ -272,6 +274,7 @@ class _LoginScreenState extends State<LoginScreen> {
           LoginScreen.email = prefs.getString('email');
           LoginScreen.address = prefs.getString('address');
           LoginScreen.phone = prefs.getString('phone');
+          print('Phone: '+LoginScreen.phone);
           LoginScreen.image = prefs.getString('image');
           checkEmailVerified();
         }
@@ -314,7 +317,6 @@ class _LoginScreenState extends State<LoginScreen> {
     final auth = FirebaseAuth.instance;
     user = auth.currentUser;
     if (user.emailVerified) {
-      print("it runs");
       if (LoginScreen.name != "" &&
           LoginScreen.email != "" &&
           LoginScreen.address != "") {

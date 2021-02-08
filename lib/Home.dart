@@ -13,6 +13,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'model.dart';
 import 'models/Trip.dart';
 import 'views/home_view.dart';
+import 'views/comments.dart';
 
 class Home extends StatefulWidget {
   @override
@@ -21,16 +22,16 @@ class Home extends StatefulWidget {
 
 class _homescreen extends State<Home> {
   int _selectedIndex = 0;
-  final newJob = new Trip(null, null, null, null, null);
-
+  static Trip job = new Trip("", DateTime.now(), DateTime.now(), "", "");
   @override
   initState() {}
   List<Widget> _options = <Widget>[
     HomeView(),
-    NewJobLocationView(job: null),
+    NewJobLocationView(job: job),
     Profile(),
     Text('Settings Screen',
         style: TextStyle(fontSize: 35, fontWeight: FontWeight.bold)),
+    Comments(),
   ];
 
   @override
@@ -75,22 +76,27 @@ class _homescreen extends State<Home> {
             BottomNavigationBarItem(
               icon: Icon(Icons.home),
               label: 'Home',
-              backgroundColor: Colors.pink[700],
+              backgroundColor: const Color(0xffbe3e57),
             ),
             BottomNavigationBarItem(
-              icon: Icon(Icons.add),
+              icon: Icon(Icons.add_box_rounded),
               label: 'Create Job',
-              backgroundColor: Colors.pink[700],
+              backgroundColor: const Color(0xffbe3e57),
             ),
             BottomNavigationBarItem(
               icon: Icon(Icons.person),
               label: 'Profile',
-              backgroundColor: Colors.pink[700],
+              backgroundColor: const Color(0xffbe3e57),
             ),
             BottomNavigationBarItem(
               icon: Icon(Icons.settings),
               label: 'Settings',
-              backgroundColor: Colors.pink[700],
+              backgroundColor: const Color(0xffbe3e57),
+            ),
+            BottomNavigationBarItem(
+              icon: ImageIcon(AssetImage('assets/icons/badge.png')),
+              label: 'Rating',
+              backgroundColor: const Color(0xffbe3e57),
             ),
           ],
           type: BottomNavigationBarType.shifting,

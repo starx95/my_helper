@@ -8,8 +8,6 @@ import 'package:hexcolor/hexcolor.dart';
 import 'dart:math';
 import 'package:my_helper/views/job_detail.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
-import 'package:my_helper/views/new_job/location_view.dart';
-import 'package:my_helper/models/Trip.dart';
 
 class HomeView extends StatefulWidget {
   @override
@@ -22,7 +20,7 @@ class DotsIndicator extends AnimatedWidget {
     this.controller,
     this.itemCount,
     this.onPageSelected,
-    this.color: Colors.redAccent,
+    this.color: const Color(0xffbe3e57),
   }) : super(listenable: controller);
 
   /// The PageController that this DotsIndicator is representing.
@@ -60,7 +58,7 @@ class DotsIndicator extends AnimatedWidget {
       width: _kDotSpacing,
       child: new Center(
         child: new Material(
-          color: Colors.pink[800],
+          color: const Color(0xffbe3e57),
           type: MaterialType.circle,
           child: new Container(
             width: _kDotSize * zoom,
@@ -426,7 +424,7 @@ class _HomeViewState extends State<HomeView> {
                                       ),
                                       child: ImageIcon(
                                         AssetImage(
-                                            'assets/icons/washing-machine.png'),
+                                            'assets/icons/microscope.png'),
                                         color: Colors.orange[900],
                                         size: 50.0,
                                       ),
@@ -436,18 +434,17 @@ class _HomeViewState extends State<HomeView> {
                                           left: 10,
                                           right: 10.0,
                                         ),
-                                        child: Text("Dobi"))
+                                        child: Text("Research\nAssitant"))
                                   ])),
                                   GestureDetector(
                                       child: Column(children: [
                                     Padding(
                                       padding: const EdgeInsets.only(
                                         left: 10,
-                                        right: 10.0,
+                                        right: 20.0,
                                       ),
                                       child: ImageIcon(
-                                        AssetImage(
-                                            'assets/icons/household.png'),
+                                        AssetImage('assets/icons/list.png'),
                                         color: Colors.orange[900],
                                         size: 50.0,
                                       ),
@@ -457,7 +454,7 @@ class _HomeViewState extends State<HomeView> {
                                           left: 10,
                                           right: 20.0,
                                         ),
-                                        child: Text("Cleaning"))
+                                        child: Text("Others"))
                                   ])),
                                 ]),
                           ),
@@ -473,7 +470,7 @@ class _HomeViewState extends State<HomeView> {
                         dotWidth: 9.0,
                         dotHeight: 9.0,
                         dotColor: Colors.grey,
-                        activeDotColor: Colors.pink[800]),
+                        activeDotColor: const Color(0xffbe3e57)),
                   ),
                 )),
                 Padding(
@@ -502,48 +499,44 @@ class _HomeViewState extends State<HomeView> {
                           itemBuilder: (context, index) {
                             DocumentSnapshot job = snapshot.data.docs[index];
                             return SingleChildScrollView(
-                                child: _getRegisteredAddress() ==
-                                        _getAddress(job["address"])
-                                    ? null
-                                    : GestureDetector(
-                                        onTap: () => Navigator.push(
-                                            context,
-                                            MaterialPageRoute(
-                                                builder: (context) =>
-                                                    JobDetail(job: job))),
-                                        child: Card(
-                                          color: Colors.pink[800],
-                                          child: ListTile(
-                                            leading: CircleAvatar(
-                                              backgroundImage: MemoryImage(
-                                                  base64.decode(job['image'])),
+                                child: GestureDetector(
+                                    onTap: () => Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                            builder: (context) =>
+                                                JobDetail(job: job))),
+                                    child: Card(
+                                      color: const Color(0xffbe3e57),
+                                      child: ListTile(
+                                        leading: CircleAvatar(
+                                          backgroundImage: MemoryImage(
+                                              base64.decode(job['image'])),
+                                        ),
+                                        title: Row(
+                                          children: [
+                                            Text(
+                                              job["title"],
+                                              style: TextStyle(
+                                                color: Colors.white,
+                                              ),
                                             ),
-                                            title: Row(
-                                              children: [
-                                                Text(
-                                                  job["title"],
-                                                  style: TextStyle(
-                                                    color: Colors.white,
-                                                  ),
+                                          ],
+                                        ),
+                                        subtitle: Row(
+                                          children: [
+                                            Flexible(
+                                              child: Text(
+                                                job["address"],
+                                                style: TextStyle(
+                                                  color: Colors.white,
                                                 ),
-                                              ],
-                                            ),
-                                            subtitle: Row(
-                                              children: [
-                                                Flexible(
-                                                  child: Text(
-                                                    job["address"],
-                                                    style: TextStyle(
-                                                      color: Colors.white,
-                                                    ),
-                                                    overflow:
-                                                        TextOverflow.ellipsis,
-                                                  ),
-                                                )
-                                              ],
-                                            ),
-                                          ),
-                                        )));
+                                                overflow: TextOverflow.ellipsis,
+                                              ),
+                                            )
+                                          ],
+                                        ),
+                                      ),
+                                    )));
                           });
                     }),
               ]),
@@ -553,21 +546,8 @@ class _HomeViewState extends State<HomeView> {
         floatingActionButton: new FloatingActionButton(
             elevation: 0.0,
             child: new Icon(Icons.search),
-            backgroundColor: Colors.pink[800],
+            backgroundColor: const Color(0xffbe3e57),
             onPressed: () {}));
-  }
-
-  _getAddress(address) async {
-    // placemark = await Geolocator().placemarkFromAddress(address);
-    // print(placemark[0].postalCode);
-    // return placemark[0].postalCode;
-  }
-
-  _getRegisteredAddress() async {
-    // List<Placemark> placemarkR =
-    //     await Geolocator().placemarkFromAddress(LoginScreen.address);
-    // print(placemarkR[0].postalCode);
-    // return placemarkR[0].postalCode;
   }
 }
 
@@ -594,14 +574,14 @@ class CustomSliverDelegate extends SliverPersistentHeaderDelegate {
           SizedBox(
             height: appBarSize < kToolbarHeight ? kToolbarHeight : appBarSize,
             child: AppBar(
-              backgroundColor: Colors.pink[800],
+              backgroundColor: const Color(0xffbe3e57),
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.vertical(
-                  bottom: Radius.circular(15),
+                  bottom: Radius.circular(30),
                 ),
               ),
               elevation: 0.0,
-              title: Center(child:Text("MyHelper")),
+              title: Center(child: Text("MyHelper")),
             ),
           ),
           Positioned(
@@ -612,7 +592,7 @@ class CustomSliverDelegate extends SliverPersistentHeaderDelegate {
             child: Opacity(
               opacity: percent,
               child: Padding(
-                padding: EdgeInsets.symmetric(horizontal: 30 * percent),
+                padding: EdgeInsets.symmetric(horizontal: 20 * percent),
                 child: Card(
                   elevation: 20.0,
                   child: Center(
@@ -683,21 +663,4 @@ class CustomSliverDelegate extends SliverPersistentHeaderDelegate {
   bool shouldRebuild(SliverPersistentHeaderDelegate oldDelegate) {
     return true;
   }
-}
-
-class CurvedClipper extends CustomClipper<Path> {
-  @override
-  Path getClip(Size size) {
-    var path = Path();
-    path.lineTo(0, size.height - 30);
-    path.quadraticBezierTo(
-        size.width / 2, size.height, size.width, size.height - 30);
-    path.lineTo(size.width, 0);
-
-    path.close();
-    return path;
-  }
-
-  @override
-  bool shouldReclip(CustomClipper<Path> oldClipper) => false;
 }

@@ -1,8 +1,9 @@
 import 'dart:typed_data';
-
+import 'package:my_helper/Home.dart';
+import 'package:my_helper/views/update_pass.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter/material.dart';
 import 'package:geocoder/geocoder.dart';
-import 'package:my_helper/Home.dart';
 import 'package:my_helper/main.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:http/http.dart' as http;
@@ -15,7 +16,10 @@ import 'package:permission_handler/permission_handler.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:path_provider/path_provider.dart';
+import 'package:my_helper/views/safety.dart';
+import 'package:my_helper/views/contact.dart';
+import 'package:my_helper/views/about.dart';
+import 'package:my_helper/views/language.dart';
 
 class Profile extends StatefulWidget {
   @override
@@ -32,13 +36,14 @@ class _ProfileState extends State<Profile> {
   String status = '';
   String base64Image;
   File tmpFile;
+  bool isSwitched = false;
   String fileName;
   CollectionReference jobs;
   String errMessage = 'Error Uploading Image';
   File _fimage;
   final _pick = ImagePicker();
   var _addcontroller = TextEditingController();
-  Uint8List imageBytess;
+  static Uint8List imageBytess;
   Position _currentPosition;
   LatLng _center = const LatLng(6.457510, 100.505455);
   double latitude, longitude;
@@ -52,7 +57,6 @@ class _ProfileState extends State<Profile> {
   bool _isButtonDisabled = true;
   final Geolocator geolocator = Geolocator()..forceAndroidLocationManager;
   final db = FirebaseFirestore.instance;
-  
 
   @override
   void initState() {
@@ -95,72 +99,255 @@ class _ProfileState extends State<Profile> {
     });
   }
 
+  void _onLogout() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    print("name: " + prefs.getString('name'));
+    prefs.setString('name', null);
+    prefs.setString('email', null);
+    LoginScreen.name = null;
+    LoginScreen.email = null;
+    Navigator.pushReplacement(context,
+        MaterialPageRoute(builder: (BuildContext context) => LoginScreen()));
+  }
+
   @override
   Widget build(BuildContext context) {
     ThemeData theme = Theme.of(context);
     return Scaffold(
       resizeToAvoidBottomInset: false,
-      body: Center(
-        child: Container(
-          padding: EdgeInsets.all(10),
-          child: Column(children: <Widget>[
-            GestureDetector(
-              onTap: _getImage,
-              child: CircleAvatar(
-                radius: 70,
-                backgroundImage: MemoryImage(imageBytess),
-              ),
+      body: CustomScrollView(
+        physics: NeverScrollableScrollPhysics(),
+        slivers: <Widget>[
+          SliverPersistentHeader(
+            pinned: true,
+            floating: true,
+            delegate: CustomSliverDelegate(
+              expandedHeight: 205,
             ),
-            TextFormField(
-              controller: name,
-              decoration: InputDecoration(
-                icon: const Icon(Icons.person),
-                labelText: 'Name',
-                labelStyle: new TextStyle(
-                  color: Colors.red[500],
+          ),
+          SliverFillRemaining(
+              child: Column(children: [
+            Row(
+              children: [
+                Padding(
+                  padding: EdgeInsets.only(left: 42, right: 180),
+                  child: GestureDetector(
+                    child: RichText(
+                      text: TextSpan(
+                        style: TextStyle(color: Colors.black),
+                        children: [
+                          WidgetSpan(
+                            child: Icon(
+                              Icons.notifications,
+                              size: 20,
+                              color: Colors.orange[900],
+                            ),
+                          ),
+                          TextSpan(
+                            text: " Notification",
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+                Padding(
+                    padding: EdgeInsets.only(),
+                    child: Container(
+                      child: Switch(
+                        value: isSwitched,
+                        onChanged: (value) {
+                          setState(() {
+                            isSwitched = value;
+                            print(isSwitched);
+                          });
+                        },
+                        activeTrackColor: const Color(0xffbe3e57),
+                        activeColor: Colors.white,
+                      ),
+                    ))
+              ],
+            ),
+            Row(
+              children: [
+                Padding(
+                  padding: EdgeInsets.only(left: 42, right: 190),
+                  child: GestureDetector(
+                      child: RichText(
+                        text: TextSpan(
+                          style: TextStyle(color: Colors.black),
+                          children: [
+                            WidgetSpan(
+                              child: Icon(
+                                Icons.language_outlined,
+                                size: 20,
+                                color: Colors.orange[900],
+                              ),
+                            ),
+                            TextSpan(
+                              text: " Language",
+                            ),
+                          ],
+                        ),
+                      ),
+                      onTap: () {
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => Language()));
+                      }),
+                ),
+                Padding(
+                    padding: EdgeInsets.only(),
+                    child: GestureDetector(
+                      child: Row(children: [
+                        Text('English'),
+                        IconButton(
+                          icon: Icon(Icons.arrow_forward_ios),
+                          onPressed: () => Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => Language())),
+                        )
+                      ]),
+                      onTap: () => Navigator.push(context,
+                          MaterialPageRoute(builder: (context) => Language())),
+                    ))
+              ],
+            ),
+            Row(children: [
+              Padding(
+                padding: EdgeInsets.only(top: 15, left: 42, right: 230),
+                child: GestureDetector(
+                  child: RichText(
+                    text: TextSpan(
+                      style: TextStyle(color: Colors.black),
+                      children: [
+                        WidgetSpan(
+                          child: Icon(
+                            Icons.lock,
+                            size: 20,
+                            color: Colors.orange[900],
+                          ),
+                        ),
+                        TextSpan(
+                          text: " Update Password",
+                        ),
+                      ],
+                    ),
+                  ),
+                  onTap: () {
+                    Navigator.push(context,
+                        MaterialPageRoute(builder: (context) => UpdatePass()));
+                  },
                 ),
               ),
-              enabled: true,
-            ),
-            TextFormField(
-              controller: phone,
-              style: theme.textTheme.subtitle1.copyWith(
-                color: theme.disabledColor,
-              ),
-              decoration: InputDecoration(
-                labelText: 'Email',
-                icon: const Icon(Icons.mail),
-                labelStyle: new TextStyle(
-                  color: Colors.red[500],
+            ]),
+            Padding(
+              padding: EdgeInsets.only(top: 25, left: 40, right: 302),
+              child: GestureDetector(
+                child: RichText(
+                  text: TextSpan(
+                    style: TextStyle(color: Colors.black),
+                    children: [
+                      WidgetSpan(
+                        child: Icon(
+                          Icons.verified_user_outlined,
+                          size: 20,
+                          color: Colors.orange[900],
+                        ),
+                      ),
+                      TextSpan(
+                        text: " Safety",
+                      ),
+                    ],
+                  ),
                 ),
+                onTap: () {
+                  Navigator.push(context,
+                      MaterialPageRoute(builder: (context) => Safety()));
+                },
               ),
-              enabled: false,
             ),
-            TextFormField(
-              controller: address,
-              decoration: InputDecoration(
-                labelText: 'Address',
-                labelStyle: new TextStyle(
-                  color: Colors.red[500],
+            Padding(
+              padding: EdgeInsets.only(top: 25, left: 43, right: 275),
+              child: GestureDetector(
+                child: RichText(
+                  text: TextSpan(
+                    style: TextStyle(color: Colors.black),
+                    children: [
+                      WidgetSpan(
+                        child: Icon(
+                          Icons.contact_mail_outlined,
+                          size: 20,
+                          color: Colors.orange[900],
+                        ),
+                      ),
+                      TextSpan(
+                        text: " Contact Us",
+                      ),
+                    ],
+                  ),
                 ),
-                icon: const Icon(Icons.location_city),
-                suffixIcon: IconButton(
-                  icon: Icon(Icons.pin_drop_rounded),
-                  onPressed: () async => showMapDialog(context),
-                ),
+                onTap: () {
+                  Navigator.push(context,
+                      MaterialPageRoute(builder: (context) => Contact()));
+                },
               ),
-              enabled: true,
             ),
-            SizedBox(
-              height: 4,
+            Padding(
+              padding: EdgeInsets.only(top: 25, left: 43, right: 287),
+              child: GestureDetector(
+                child: RichText(
+                  text: TextSpan(
+                    style: TextStyle(color: Colors.black),
+                    children: [
+                      WidgetSpan(
+                        child: Icon(
+                          Icons.info_outline,
+                          size: 20,
+                          color: Colors.orange[900],
+                        ),
+                      ),
+                      TextSpan(
+                        text: " About Us",
+                      ),
+                    ],
+                  ),
+                ),
+                onTap: () {
+                  Navigator.push(context,
+                      MaterialPageRoute(builder: (context) => About()));
+                },
+              ),
             ),
-            MaterialButton(
-              child: Text("SAVE"),
-              onPressed: () => startUpload(name.text, phone.text, address.text),
-              color: Colors.pink[500],
+            Padding(
+              padding: EdgeInsets.only(top: 25, left: 43, right: 300),
+              child: GestureDetector(
+                child: RichText(
+                  text: TextSpan(
+                    style: TextStyle(color: Colors.black),
+                    children: [
+                      WidgetSpan(
+                        child: Icon(
+                          Icons.exit_to_app,
+                          size: 20,
+                          color: Colors.orange[900],
+                        ),
+                      ),
+                      TextSpan(
+                        text: " Logout",
+                      ),
+                    ],
+                  ),
+                ),
+                onTap: () {
+                  _onLogout();
+                },
+              ),
             )
-          ]),
-        ),
+          ]))
+        ],
       ),
     );
   }
@@ -311,5 +498,129 @@ class _ProfileState extends State<Profile> {
 
   void showToast(String msg, {int duration, int gravity}) {
     Toast.show(msg, context, duration: duration, gravity: gravity);
+  }
+}
+
+class CustomSliverDelegate extends SliverPersistentHeaderDelegate {
+  final double expandedHeight;
+  final bool hideTitleWhenExpanded;
+
+  CustomSliverDelegate({
+    @required this.expandedHeight,
+    this.hideTitleWhenExpanded = true,
+  });
+
+  @override
+  Widget build(
+      BuildContext context, double shrinkOffset, bool overlapsContent) {
+    final appBarSize = expandedHeight - shrinkOffset;
+    final cardTopPosition = expandedHeight / 2 - shrinkOffset;
+    final proportion = 2 - (expandedHeight / appBarSize);
+    final percent = proportion < 0 || proportion > 1 ? 0.0 : proportion;
+    return SizedBox(
+      height: 300,
+      child: Stack(
+        children: [
+          SizedBox(
+            height: 150,
+            child: AppBar(
+              backgroundColor: const Color(0xffbe3e57),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.vertical(
+                  bottom: Radius.circular(25),
+                ),
+              ),
+              elevation: 0.0,
+              title: Center(child: Text("Profile")),
+            ),
+          ),
+          Positioned(
+            left: 0.0,
+            right: 0.0,
+            top: 50,
+            bottom: 0.0,
+            child: Opacity(
+              opacity: percent,
+              child: Padding(
+                padding: EdgeInsets.symmetric(horizontal: 20 * percent),
+                child: Container(
+                    child: Card(
+                  elevation: 10.0,
+                  child: Center(
+                    child: ListTile(
+                      title: Padding(
+                        padding: EdgeInsets.only(top: 10),
+                        child: Column(
+                          children: [
+                            GestureDetector(
+                              onTap: _ProfileState()._getImage,
+                              child: CircleAvatar(
+                                radius: 70,
+                                backgroundImage:
+                                    MemoryImage(_ProfileState.imageBytess),
+                              ),
+                            ),
+                            Flexible(
+                                child: Padding(
+                              padding: EdgeInsets.only(top: 2),
+                              child: Text(
+                                LoginScreen.name,
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                                softWrap: false,
+                                style: TextStyle(
+                                  color: Colors.black,
+                                ),
+                              ),
+                            )),
+                            Flexible(
+                                child: Padding(
+                              padding: EdgeInsets.only(top: 2),
+                              child: Text(
+                                LoginScreen.email,
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                                softWrap: false,
+                                style: TextStyle(
+                                  color: Colors.black,
+                                ),
+                              ),
+                            )),
+                            Flexible(
+                                child: Padding(
+                              padding: EdgeInsets.only(top: 2),
+                              child: Text(
+                                LoginScreen.phone,
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                                softWrap: false,
+                                style: TextStyle(
+                                  color: Colors.black,
+                                ),
+                              ),
+                            )),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+                )),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  @override
+  double get maxExtent => expandedHeight + expandedHeight / 2;
+
+  @override
+  double get minExtent => kToolbarHeight;
+
+  @override
+  bool shouldRebuild(SliverPersistentHeaderDelegate oldDelegate) {
+    return true;
   }
 }
