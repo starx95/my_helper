@@ -58,6 +58,8 @@ dependencies:
   path_provider: ^1.6.27
   hexcolor: ^1.0.6
   smooth_page_indicator: ^0.2.0
+  smooth_star_rating: ^1.1.1
+
 
 dev_dependencies:
   flutter_test:

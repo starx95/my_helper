@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_session/flutter_session.dart';
 import 'package:http/http.dart' show get;
+import 'package:my_helper/views/find_job.dart';
 import 'package:my_helper/views/home_view.dart';
 import 'package:my_helper/views/new_job/location_view.dart';
 import 'dart:convert';
@@ -29,8 +30,7 @@ class _homescreen extends State<Home> {
     HomeView(),
     NewJobLocationView(job: job),
     Profile(),
-    Text('Settings Screen',
-        style: TextStyle(fontSize: 35, fontWeight: FontWeight.bold)),
+    FindJob(),
     Comments(),
   ];
 
@@ -89,8 +89,8 @@ class _homescreen extends State<Home> {
               backgroundColor: const Color(0xffbe3e57),
             ),
             BottomNavigationBarItem(
-              icon: Icon(Icons.settings),
-              label: 'Settings',
+              icon: Icon(Icons.search),
+              label: 'Find Jobs',
               backgroundColor: const Color(0xffbe3e57),
             ),
             BottomNavigationBarItem(
