@@ -499,44 +499,52 @@ class _HomeViewState extends State<HomeView> {
                           itemBuilder: (context, index) {
                             DocumentSnapshot job = snapshot.data.docs[index];
                             return SingleChildScrollView(
-                                child: GestureDetector(
-                                    onTap: () => Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                            builder: (context) =>
-                                                JobDetail(job: job))),
-                                    child: Card(
-                                      color: const Color(0xffbe3e57),
-                                      child: ListTile(
-                                        leading: CircleAvatar(
-                                          backgroundImage: MemoryImage(
-                                              base64.decode(job['image'])),
-                                        ),
-                                        title: Row(
-                                          children: [
-                                            Text(
-                                              job["title"],
-                                              style: TextStyle(
-                                                color: Colors.white,
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                        subtitle: Row(
-                                          children: [
-                                            Flexible(
-                                              child: Text(
-                                                job["address"],
+                                child: Column(children: [
+                              job['bookedBy'] == null
+                                  ? GestureDetector(
+                                      onTap: () => Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                              builder: (context) => JobDetail(job: job))),
+                                      child: Card(
+                                        color: const Color(0xffbe3e57),
+                                        child: ListTile(
+                                          leading: CircleAvatar(
+                                            backgroundImage: MemoryImage(
+                                                base64.decode(job['image'])),
+                                          ),
+                                          title: Row(
+                                            children: [
+                                              Text(
+                                                job["title"],
                                                 style: TextStyle(
                                                   color: Colors.white,
                                                 ),
-                                                overflow: TextOverflow.ellipsis,
                                               ),
-                                            )
-                                          ],
+                                            ],
+                                          ),
+                                          subtitle: Row(
+                                            children: [
+                                              Flexible(
+                                                child: Text(
+                                                  job["address"],
+                                                  style: TextStyle(
+                                                    color: Colors.white,
+                                                  ),
+                                                  overflow:
+                                                      TextOverflow.ellipsis,
+                                                ),
+                                              )
+                                            ],
+                                          ),
                                         ),
-                                      ),
-                                    )));
+                                      ))
+                                  : Padding(
+                                      padding: EdgeInsets.all(50),
+                                      child: Text(
+                                          "No available jobs in the vicinity",
+                                          style: TextStyle(fontSize: 18)))
+                            ]));
                           });
                     }),
               ]),

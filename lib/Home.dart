@@ -24,7 +24,7 @@ class Home extends StatefulWidget {
 
 class _homescreen extends State<Home> {
   int _selectedIndex = 0;
-  static Trip job = new Trip("", DateTime.now(), DateTime.now(), "", "");
+  static Trip job = new Trip("","", "", "");
   @override
   initState() {}
   List<Widget> _options = <Widget>[

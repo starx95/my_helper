@@ -1,9 +1,6 @@
 class Trip {
-  String title, address;
-  DateTime startDate;
-  DateTime endDate;
-  String wages;
+  String title, address, duration,wages;
 
-  Trip(this.title,this.startDate,this.endDate,this.address,this.wages);
+  Trip(this.title,this.address, this.duration,this.wages);
 }
 
