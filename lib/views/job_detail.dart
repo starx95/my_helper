@@ -1,7 +1,7 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
-import 'package:my_helper/models/Trip.dart';
+import 'package:my_helper/models/Job.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:my_helper/main.dart';
 
@@ -19,6 +19,7 @@ class _JobDetailViewState extends State<JobDetail> {
   Widget build(BuildContext context) {
     final db = FirebaseFirestore.instance;
     final String title = widget.job.get('title');
+    final String employern = widget.job.get('employer');
     final String employer = widget.job.get('employer email');
     final String address = widget.job.get('address');
     final image = base64Decode(widget.job.get('image'));
@@ -78,7 +79,7 @@ class _JobDetailViewState extends State<JobDetail> {
                                       right: 10,
                                     ),
                                     child: Text(
-                                      employer,
+                                      employern,
                                       textAlign: TextAlign.left,
                                       style: TextStyle(
                                         color: Colors.black,

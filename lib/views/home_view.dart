@@ -539,11 +539,12 @@ class _HomeViewState extends State<HomeView> {
                                           ),
                                         ),
                                       ))
-                                  : Padding(
-                                      padding: EdgeInsets.all(50),
-                                      child: Text(
-                                          "No available jobs in the vicinity",
-                                          style: TextStyle(fontSize: 18)))
+                                  : Text("")
+                                  // Padding(
+                                  //     padding: EdgeInsets.all(50),
+                                  //     child: Text(
+                                  //         "No available jobs in the vicinity",
+                                  //         style: TextStyle(fontSize: 18)))
                             ]));
                           });
                     }),

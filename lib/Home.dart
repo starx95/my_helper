@@ -6,13 +6,11 @@ import 'package:my_helper/views/find_job.dart';
 import 'package:my_helper/views/home_view.dart';
 import 'package:my_helper/views/new_job/location_view.dart';
 import 'dart:convert';
-import 'Job.dart';
 import 'Profile.dart';
 import 'main.dart';
 import 'package:my_helper/main.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'model.dart';
-import 'models/Trip.dart';
+import 'models/Job.dart';
 import 'views/home_view.dart';
 import 'views/comments.dart';
 import 'package:keyboard_avoider/keyboard_avoider.dart';
@@ -24,7 +22,7 @@ class Home extends StatefulWidget {
 
 class _homescreen extends State<Home> {
   int _selectedIndex = 0;
-  static Trip job = new Trip("","", "", "");
+  static Job job = new Job("","", "", "");
   @override
   initState() {}
   List<Widget> _options = <Widget>[
