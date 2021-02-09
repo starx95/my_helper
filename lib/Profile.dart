@@ -70,11 +70,12 @@ class _ProfileState extends State<Profile> {
   }
 
   Future _getImage() async {
-    final pickedfile = await _pick.getImage(source: ImageSource.gallery);
+    var pickedfile = await _pick.getImage(source: ImageSource.gallery);
     setState(() {
       if (pickedfile != null) {
         _fimage = File(pickedfile.path);
         imageBytess = _fimage.readAsBytesSync();
+        photoBase64 = base64Encode(imageBytess);
         fileName = pickedfile.path.split('/').last;
       } else {
         print('No image selected.');

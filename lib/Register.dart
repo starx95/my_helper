@@ -372,7 +372,6 @@ class _Register extends State<Register> {
                               return 'Please Enter your email address';
                             } else if (EmailValidator.validate(_emcontroller) ==
                                 false) {
-                              //_email = '';
                               return 'Please enter a valid email';
                             } else {
                               _email = _emcontroller;
@@ -579,14 +578,11 @@ class _Register extends State<Register> {
     await pr.show();
 
     try {
-      UserCredential userCredential = await FirebaseAuth.instance
+      await FirebaseAuth.instance
           .createUserWithEmailAndPassword(email: _email, password: _password);
-      var user = await FirebaseAuth.instance.currentUser;
-
-      await FirebaseAuth.instance.currentUser.updateProfile(
-        displayName: _name,
-        photoURL: 'define an url',
-      );
+      var user = FirebaseAuth.instance.currentUser;
+      print(photoBase64);
+      
       await db.collection("Users").doc(_email).set({
         'name': _name,
         'address': _address,
@@ -594,7 +590,6 @@ class _Register extends State<Register> {
         'phone': _phone,
         'image': photoBase64
       });
-
       user.sendEmailVerification();
       Toast.show(
         "Registration success. Please check your email for OTP verification.",
