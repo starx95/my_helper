@@ -1,22 +1,20 @@
 import 'dart:convert';
 import 'dart:io';
 import 'dart:typed_data';
-
 import 'package:email_validator/email_validator.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:geocoder/geocoder.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:my_helper/main.dart';
-import 'package:maps_launcher/maps_launcher.dart';
 import 'package:geolocator/geolocator.dart';
-import 'package:http/http.dart' as http;
 import 'package:progress_dialog/progress_dialog.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:toast/toast.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 
 class Register extends StatefulWidget {
   @override
@@ -90,7 +88,6 @@ class _Register extends State<Register> {
                           newLatLng.latitude, newLatLng.longitude);
                       var addresses = await Geocoder.local
                           .findAddressesFromCoordinates(coordinates);
-                      print(addresses.first.addressLine);
                       _currentAddress = "${addresses.first.addressLine}";
                       newLatLng.toString();
                       _addcontroller.text = _currentAddress;
@@ -158,7 +155,6 @@ class _Register extends State<Register> {
     try {
       var addresses =
           await Geocoder.local.findAddressesFromCoordinates(coordinates);
-      print(addresses.first.addressLine);
       _currentAddress = "${addresses.first.addressLine}";
       setState(() {});
     } catch (e) {
@@ -209,8 +205,8 @@ class _Register extends State<Register> {
                             tooltip: 'Open Camera',
                             onPressed: () async {
                               var picture = await _pick.getImage(
-                                source: ImageSource.camera);
-                                setState(() {
+                                  source: ImageSource.camera);
+                              setState(() {
                                 if (picture != null) {
                                   _fimage = File(picture.path);
                                   imageBytess = _fimage.readAsBytesSync();
@@ -266,12 +262,10 @@ class _Register extends State<Register> {
     try {
       final coordinates = new Coordinates(
           _currentPosition.latitude, _currentPosition.longitude);
-      print("test: " + coordinates.toString());
       var addresses =
           await Geocoder.local.findAddressesFromCoordinates(coordinates);
 
       setState(() {
-        print("test" + addresses.first.addressLine);
         _currentAddress = "${addresses.first.addressLine}";
         setState(() {});
         _address = _currentAddress;
@@ -304,15 +298,16 @@ class _Register extends State<Register> {
                         child: Column(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: <Widget>[
-                              imageBytess == null ?
-                              Text(
-                                'Set Profile Picture',
-                                textAlign: TextAlign.center,
-                                style: TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 10,
-                                ),
-                              ) : Text("")
+                              imageBytess == null
+                                  ? Text(
+                                      'Set Profile Picture',
+                                      textAlign: TextAlign.center,
+                                      style: TextStyle(
+                                        color: Colors.white,
+                                        fontSize: 10,
+                                      ),
+                                    )
+                                  : Text("")
                             ]),
                         backgroundImage: imageBytess == null
                             ? NetworkImage(
@@ -581,14 +576,23 @@ class _Register extends State<Register> {
       await FirebaseAuth.instance
           .createUserWithEmailAndPassword(email: _email, password: _password);
       var user = FirebaseAuth.instance.currentUser;
-      print(photoBase64);
-      
+
+      final _firebaseStorage = FirebaseStorage.instance;
+      if(_fimage != null){
+        //Create a reference to the location you want to upload to in firebase  
+        Reference reference = _firebaseStorage.ref().child("images/");
+        UploadTask uploadTask = reference.putFile(_fimage);
+         // Waits till the file is uploaded then stores the download url 
+        var location = (await uploadTask.whenComplete(() => reference.getDownloadURL()));
+        String url = location.toString();
+        print(url);
+      }
+
       await db.collection("Users").doc(_email).set({
         'name': _name,
         'address': _address,
         'email': _email,
         'phone': _phone,
-        'image': photoBase64
       });
       user.sendEmailVerification();
       Toast.show(
@@ -623,7 +627,6 @@ class _Register extends State<Register> {
 
   void _onChange(bool value) {
     setState(() {
-      print(monVal);
       _rememberMe = value;
     });
   }
