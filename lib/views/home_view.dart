@@ -28,6 +28,7 @@ class DotsIndicator extends AnimatedWidget {
 
   /// The number of items managed by the PageController
   final int itemCount;
+  static double width;
 
   /// Called when a dot is tapped
   final ValueChanged<int> onPageSelected;
@@ -73,6 +74,7 @@ class DotsIndicator extends AnimatedWidget {
   }
 
   Widget build(BuildContext context) {
+    width = MediaQuery.of(context).size.width;
     return new Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: new List<Widget>.generate(itemCount, _buildDot),
@@ -110,6 +112,7 @@ class _HomeViewState extends State<HomeView> {
                 ),
                 Container(
                     height: 100,
+                    width: DotsIndicator.width,
                     child: SizedBox(
                       child: PageView(
                         controller: controller,
@@ -121,7 +124,7 @@ class _HomeViewState extends State<HomeView> {
                                 Padding(
                                   padding: const EdgeInsets.only(
                                     left: 40.0,
-                                    right: 20.0,
+                                    right: 10.0,
                                   ),
                                   child: ImageIcon(
                                     AssetImage('assets/icons/salon.png'),
@@ -132,7 +135,7 @@ class _HomeViewState extends State<HomeView> {
                                 Padding(
                                     padding: const EdgeInsets.only(
                                       left: 40.0,
-                                      right: 20.0,
+                                      right: 10.0,
                                     ),
                                     child: Text("Beauty"))
                               ])),
@@ -141,7 +144,7 @@ class _HomeViewState extends State<HomeView> {
                                 Padding(
                                   padding: const EdgeInsets.only(
                                     left: 20.0,
-                                    right: 20.0,
+                                    right: 10.0,
                                   ),
                                   child: ImageIcon(
                                     AssetImage('assets/icons/catering.png'),
@@ -152,7 +155,7 @@ class _HomeViewState extends State<HomeView> {
                                 Padding(
                                     padding: const EdgeInsets.only(
                                       left: 20.0,
-                                      right: 20.0,
+                                      right: 10.0,
                                     ),
                                     child: Text("Catering"))
                               ])),
@@ -206,7 +209,7 @@ class _HomeViewState extends State<HomeView> {
                                 Padding(
                                   padding: const EdgeInsets.only(
                                     left: 40.0,
-                                    right: 20.0,
+                                    right: 10.0,
                                   ),
                                   child: ImageIcon(
                                     AssetImage('assets/icons/sewing.png'),
@@ -217,7 +220,7 @@ class _HomeViewState extends State<HomeView> {
                                 Padding(
                                     padding: const EdgeInsets.only(
                                       left: 40.0,
-                                      right: 20.0,
+                                      right: 10.0,
                                     ),
                                     child: Text("Tailoring"))
                               ])),
@@ -290,7 +293,7 @@ class _HomeViewState extends State<HomeView> {
                                 Padding(
                                   padding: const EdgeInsets.only(
                                     left: 40.0,
-                                    right: 20.0,
+                                    right: 10.0,
                                   ),
                                   child: ImageIcon(
                                     AssetImage('assets/icons/knitting.png'),
@@ -301,7 +304,7 @@ class _HomeViewState extends State<HomeView> {
                                 Padding(
                                     padding: const EdgeInsets.only(
                                       left: 40.0,
-                                      right: 20.0,
+                                      right: 10.0,
                                     ),
                                     child: Text("Crafts"))
                               ])),
@@ -310,7 +313,7 @@ class _HomeViewState extends State<HomeView> {
                                 Padding(
                                   padding: const EdgeInsets.only(
                                     left: 15.0,
-                                    right: 15.0,
+                                    right: 10.0,
                                   ),
                                   child: ImageIcon(
                                     AssetImage('assets/icons/massage.png'),
@@ -321,7 +324,7 @@ class _HomeViewState extends State<HomeView> {
                                 Padding(
                                     padding: const EdgeInsets.only(
                                       left: 20.0,
-                                      right: 15.0,
+                                      right: 10.0,
                                     ),
                                     child: Text("Massage"))
                               ])),
@@ -330,7 +333,7 @@ class _HomeViewState extends State<HomeView> {
                                 Padding(
                                   padding: const EdgeInsets.only(
                                     left: 15.0,
-                                    right: 20.0,
+                                    right: 10.0,
                                   ),
                                   child: ImageIcon(
                                     AssetImage('assets/icons/street-food.png'),
@@ -341,7 +344,7 @@ class _HomeViewState extends State<HomeView> {
                                 Padding(
                                     padding: const EdgeInsets.only(
                                       left: 20.0,
-                                      right: 20.0,
+                                      right: 10.0,
                                     ),
                                     child: Text("Street food"))
                               ])),
