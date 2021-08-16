@@ -36,7 +36,6 @@ class _homescreen extends State<Home> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      resizeToAvoidBottomPadding: false,
       resizeToAvoidBottomInset: true,
       drawer: Drawer(
           child: ListView(padding: EdgeInsets.zero, children: <Widget>[
