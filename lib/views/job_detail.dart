@@ -56,7 +56,7 @@ class _JobDetailViewState extends State<JobDetail> {
                         ),
                         Container(
                           width: MediaQuery.of(context).size.width - 10,
-                          height: MediaQuery.of(context).size.height / 3 - 10,
+                          height: MediaQuery.of(context).size.height / 3 - 50,
                           decoration: BoxDecoration(
                               color: Colors.grey,
                               image: DecorationImage(

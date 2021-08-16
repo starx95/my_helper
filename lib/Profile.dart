@@ -131,7 +131,7 @@ class _ProfileState extends State<Profile> {
             Row(
               children: [
                 Padding(
-                  padding: EdgeInsets.only(left: 42, right: 180),
+                  padding: EdgeInsets.only(left: 40, right: 180),
                   child: GestureDetector(
                     child: RichText(
                       text: TextSpan(
@@ -172,7 +172,7 @@ class _ProfileState extends State<Profile> {
             Row(
               children: [
                 Padding(
-                  padding: EdgeInsets.only(left: 42, right: 190),
+                  padding: EdgeInsets.only(left: 40, right: 170),
                   child: GestureDetector(
                       child: RichText(
                         text: TextSpan(
@@ -200,7 +200,8 @@ class _ProfileState extends State<Profile> {
                 ),
                 Padding(
                     padding: EdgeInsets.only(),
-                    child: GestureDetector(
+                    child: Expanded(
+                        child: GestureDetector(
                       child: Row(children: [
                         Text('English'),
                         IconButton(
@@ -214,11 +215,11 @@ class _ProfileState extends State<Profile> {
                       onTap: () => Navigator.push(context,
                           MaterialPageRoute(builder: (context) => Language())),
                     ))
-              ],
+                )],
             ),
             Row(children: [
               Padding(
-                padding: EdgeInsets.only(top: 15, left: 42, right: 230),
+                padding: EdgeInsets.only(top: 15, left: 40, right: 170),
                 child: GestureDetector(
                   child: RichText(
                     text: TextSpan(
@@ -245,7 +246,7 @@ class _ProfileState extends State<Profile> {
               ),
             ]),
             Padding(
-              padding: EdgeInsets.only(top: 25, left: 40, right: 302),
+              padding: EdgeInsets.only(top: 25, left: 40, right: 285),
               child: GestureDetector(
                 child: RichText(
                   text: TextSpan(
@@ -271,7 +272,7 @@ class _ProfileState extends State<Profile> {
               ),
             ),
             Padding(
-              padding: EdgeInsets.only(top: 25, left: 43, right: 275),
+              padding: EdgeInsets.only(top: 25, left: 40, right: 255),
               child: GestureDetector(
                 child: RichText(
                   text: TextSpan(
@@ -297,7 +298,7 @@ class _ProfileState extends State<Profile> {
               ),
             ),
             Padding(
-              padding: EdgeInsets.only(top: 25, left: 43, right: 287),
+              padding: EdgeInsets.only(top: 25, left: 40, right: 270),
               child: GestureDetector(
                 child: RichText(
                   text: TextSpan(
@@ -323,7 +324,7 @@ class _ProfileState extends State<Profile> {
               ),
             ),
             Padding(
-              padding: EdgeInsets.only(top: 25, left: 43, right: 300),
+              padding: EdgeInsets.only(top: 25, left: 40, right: 282),
               child: GestureDetector(
                 child: RichText(
                   text: TextSpan(
